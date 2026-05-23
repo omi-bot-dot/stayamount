@@ -269,7 +269,7 @@ const TR = {
     stayInfo:'🏡 ステイ先の情報', stayLinkBtn:'🏡 ステイを見る',
     stayAddrLabel:'📍 ステイ先の住所', mapLinkBtn:'📍 地図を見る',
     notes:'📝 メモ', notesPh:'例：眺め最高！キッチンあり、洗濯機つき 🧺',
-    checkIn:'🔑 チェックイン', checkOut:'🔐 チェックアウト',
+    checkIn:'🔑 チェックイン', checkOut:'🔐 チェックアウト', dateFmt:'',
     member:'メンバー', nights:n=>`${n}泊`, perNight:'1泊あたり',
     perMonth:'1ヶ月あたり（参考）',
     calcNote:(n,r,c)=>`合計 ${n}泊 ／ 1泊 ${r} ／ 泊数・人数ベースで計算`,
@@ -292,7 +292,7 @@ const TR = {
     stayInfo:'🏡 Stay Info', stayLinkBtn:'🏡 View Stay',
     stayAddrLabel:'📍 Stay Address', mapLinkBtn:'📍 View Map',
     notes:'📝 Notes', notesPh:'e.g., Amazing view! Kitchen & washer 🧺',
-    checkIn:'🔑 Check-in', checkOut:'🔐 Check-out',
+    checkIn:'🔑 Check-in', checkOut:'🔐 Check-out', dateFmt:' (MM/DD/YYYY)',
     member:'Member', nights:n=>`${n} night${n===1?'':'s'}`, perNight:'per night',
     perMonth:'per month (ref)',
     calcNote:(n,r,c)=>`Total ${n} nights ／ ${r}/night ／ Split by nights & people`,
@@ -500,8 +500,8 @@ function buildDatesContainer() {
         <span class="person-nights-badge" id="nights-${i}">—</span>
       </div>
       <div class="dates-row">
-        <div class="input-group"><label>${t('checkIn')}</label><input type="date" id="checkin-${i}" onchange="saveAndCalc()"></div>
-        <div class="input-group"><label>${t('checkOut')}</label><input type="date" id="checkout-${i}" onchange="saveAndCalc()"></div>
+        <div class="input-group"><label>${t('checkIn')}<span style="font-weight:400;opacity:0.6">${t('dateFmt')}</span></label><input type="date" id="checkin-${i}" onchange="saveAndCalc()"></div>
+        <div class="input-group"><label>${t('checkOut')}<span style="font-weight:400;opacity:0.6">${t('dateFmt')}</span></label><input type="date" id="checkout-${i}" onchange="saveAndCalc()"></div>
       </div>`;
     cont.appendChild(row);
   }
