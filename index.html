@@ -302,7 +302,7 @@ const TR = {
     memoLabel:'📝 Notes',
     shareBtn:'🔗 Copy URL to share with friends',
     copied:'✓ Copied!', copyPrompt:'Copy this URL:',
-    peoplePill:n=>`${n}p`, candNum:n=>`Option ${n}`,
+    peoplePill:n=>`${n} ${n===1?'person':'people'}`, candNum:n=>`Option ${n}`,
   }
 };
 function t(key,...a){const v=TR[LANG][key];return typeof v==='function'?v(...a):v;}
