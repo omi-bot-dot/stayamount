@@ -127,6 +127,9 @@ textarea.stay-field { resize: vertical; font-family: inherit; }
 .share-btn.copied { border-color: var(--teal); color: var(--teal); }
 .currency-dropdown::-webkit-scrollbar { width: 4px; }
 .currency-dropdown::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+.lang-toggle { display: flex; gap: 4px; background: var(--border); border-radius: 10px; padding: 3px; margin-left: auto; }
+.lang-btn { padding: 4px 10px; border: none; border-radius: 8px; font-size: 0.78rem; font-weight: 700; color: var(--mid); background: none; cursor: pointer; transition: all 0.15s; }
+.lang-btn.active { background: var(--white); color: var(--dark); box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
 </style>
 </head>
 <body>
@@ -136,14 +139,18 @@ textarea.stay-field { resize: vertical; font-family: inherit; }
     <svg viewBox="0 0 24 24"><path d="M12 2C9.8 2 8 4.5 8 7.5c0 1.5.4 2.9 1.1 3.9C7.3 12.5 6 14.2 6 16c0 2.2 1.8 4 6 4s6-1.8 6-4c0-1.8-1.3-3.5-3.1-4.6.7-1 1.1-2.4 1.1-3.9C16 4.5 14.2 2 12 2zm0 2c1.1 0 2 1.6 2 3.5 0 1.1-.3 2-.8 2.7-.4-.1-.8-.2-1.2-.2s-.8.1-1.2.2C10.3 9.5 10 8.6 10 7.5 10 5.6 10.9 4 12 4zm0 7.5c.6 0 1.1.1 1.6.3C14.5 12.7 15 14 15 15c0 .5-.1 1-.3 1.4-.7.4-1.7.6-2.7.6s-2-.2-2.7-.6C9.1 16 9 15.5 9 15c0-1 .5-2.3 1.4-3.2.5-.2 1-.3 1.6-.3z"/></svg>
   </div>
   <div class="header-text">
-    <h1>✈️ ステイ代を分けよう</h1>
-    <p>🏠 入力するとリアルタイムで計算します</p>
+    <h1 id="header-title">✈️ ステイ代を分けよう</h1>
+    <p id="header-sub">🏠 入力するとリアルタイムで計算します</p>
+  </div>
+  <div class="lang-toggle">
+    <button class="lang-btn active" id="lang-ja" onclick="setLang('ja')">JP</button>
+    <button class="lang-btn" id="lang-en" onclick="setLang('en')">EN</button>
   </div>
 </div>
 
 <div class="tab-bar" id="tab-bar"></div>
 <div id="content-area"></div>
-<button class="share-btn" id="share-btn" onclick="copyUrl()">🔗 このページのURLをコピーして友達に共有</button>
+<button class="share-btn" id="share-btn" onclick="copyUrl()">🔗 このページのURLをコピーして友達に共有 / Copy URL to share with friends</button>
 
 <script>
 const CI = {
@@ -247,6 +254,68 @@ const JA = {
 const codes = Object.keys(CI);
 
 const DEFAULT_EMOJIS = ['🐱','🐶','🐼','🦊','🐨','🐰'];
+
+// ── i18n ──────────────────────────────────────────────────────────────────────
+let LANG = 'ja';
+const TR = {
+  ja: {
+    title:'✈️ ステイ代を分けよう', sub:'🏠 入力するとリアルタイムで計算します',
+    tabBase:'👥 基本情報', tabSummary:'📋 サマリー', tabCand:'候補',
+    howMany:'👥 何人で泊まる？', names:'名前', namePh:'名前を入力',
+    candPh:'📝 候補の名前（例：Central Park近く）',
+    dates:'📅 日程', curAmt:'💱 通貨・金額', amtPh:'金額を入力',
+    curSearch:'アメリカ、USD、yen…', notFound:'見つかりません', ratePh:'レート',
+    payments:'💸 それぞれの支払い', enterToCalc:'基本情報の日程と金額を入力すると計算します',
+    stayInfo:'🏡 ステイ先の情報', stayLinkBtn:'🏡 ステイを見る',
+    stayAddrLabel:'📍 ステイ先の住所', mapLinkBtn:'📍 地図を見る',
+    notes:'📝 メモ', notesPh:'例：眺め最高！キッチンあり、洗濯機つき 🧺',
+    checkIn:'🔑 チェックイン', checkOut:'🔐 チェックアウト',
+    member:'メンバー', nights:n=>`${n}泊`, perNight:'1泊あたり',
+    perMonth:'1ヶ月あたり（参考）',
+    calcNote:(n,r,c)=>`合計 ${n}泊 ／ 1泊 ${r} ／ 泊数・人数ベースで計算`,
+    summaryEmpty:'候補の金額を入力すると、ここに一覧が表示されます',
+    notEntered:'未入力', periodLabel:'📅 期間', stayLabel:'🏡 ステイ',
+    addrLabel:'📍 住所', openLink:'リンクを開く', openMap:'地図を開く',
+    memoLabel:'📝 メモ',
+    shareBtn:'🔗 このページのURLをコピーして友達に共有',
+    copied:'✓ コピーしました！', copyPrompt:'このURLをコピーしてください:',
+    peoplePill:n=>`${n}人`, candNum:n=>`候補${n}`,
+  },
+  en: {
+    title:'✈️ Split the Stay', sub:'🏠 Real-time calculation as you type',
+    tabBase:'👥 Basic Info', tabSummary:'📋 Summary', tabCand:'Option',
+    howMany:'👥 How many people?', names:'Names', namePh:'Enter name',
+    candPh:'📝 Option name (e.g., near Central Park)',
+    dates:'📅 Dates', curAmt:'💱 Currency & Amount', amtPh:'Enter amount',
+    curSearch:'Country, USD, yen…', notFound:'Not found', ratePh:'Rate',
+    payments:'💸 Each person\'s share', enterToCalc:'Enter dates & amount in Basic Info to calculate',
+    stayInfo:'🏡 Stay Info', stayLinkBtn:'🏡 View Stay',
+    stayAddrLabel:'📍 Stay Address', mapLinkBtn:'📍 View Map',
+    notes:'📝 Notes', notesPh:'e.g., Amazing view! Kitchen & washer 🧺',
+    checkIn:'🔑 Check-in', checkOut:'🔐 Check-out',
+    member:'Member', nights:n=>`${n} night${n===1?'':'s'}`, perNight:'per night',
+    perMonth:'per month (ref)',
+    calcNote:(n,r,c)=>`Total ${n} nights ／ ${r}/night ／ Split by nights & people`,
+    summaryEmpty:'Enter amounts to see the summary here',
+    notEntered:'Not entered', periodLabel:'📅 Duration', stayLabel:'🏡 Stay',
+    addrLabel:'📍 Address', openLink:'Open link', openMap:'Open map',
+    memoLabel:'📝 Notes',
+    shareBtn:'🔗 Copy URL to share with friends',
+    copied:'✓ Copied!', copyPrompt:'Copy this URL:',
+    peoplePill:n=>`${n}p`, candNum:n=>`Option ${n}`,
+  }
+};
+function t(key,...a){const v=TR[LANG][key];return typeof v==='function'?v(...a):v;}
+function setLang(l){
+  LANG=l;
+  document.getElementById('lang-ja').classList.toggle('active',l==='ja');
+  document.getElementById('lang-en').classList.toggle('active',l==='en');
+  document.getElementById('header-title').textContent=t('title');
+  document.getElementById('header-sub').textContent=t('sub');
+  document.getElementById('share-btn').innerHTML='🔗 '+t('shareBtn').replace('🔗 ','');
+  try{localStorage.setItem('lang',l);}catch(e){}
+  renderTabs(); renderContent();
+}
 const EMOJIS = ['🐱','🐶','🐼','🦊','🐨','🐰','🐹','🐻','🦦','🐿️','🦔','🦉','🦁','🐯','🐧','🦩','🌟','🌻','🐝','🐳','🦭','🦄','🌸','🌼','🌺','🌷','🌹','🪷','🪻','🐬'];
 
 // ── State ─────────────────────────────────────────────────────────────────────
@@ -265,11 +334,11 @@ let _currency = 'USD';
 // ── Tabs ──────────────────────────────────────────────────────────────────────
 function renderTabs() {
   const bar = document.getElementById('tab-bar');
-  let h = `<button class="tab-btn base-btn${curTab==='base'?' active':''}" onclick="switchTab('base')">👥 基本情報</button>`;
-  candidates.forEach((c, i) => { const label=c.name?c.name.slice(0,10):`候補${i+1}`; h += `<button class="tab-btn${curTab===i?' active':''}" onclick="switchTab(${i})">${label}</button>`; });
+  let h = `<button class="tab-btn base-btn${curTab==='base'?' active':''}" onclick="switchTab('base')">${t('tabBase')}</button>`;
+  candidates.forEach((c, i) => { const label=c.name?c.name.slice(0,10):t('candNum',i+1); h += `<button class="tab-btn${curTab===i?' active':''}" onclick="switchTab(${i})">${label}</button>`; });
   if (candidates.length < 5) h += `<button class="tab-btn add-btn" onclick="addCand()">＋</button>`;
   if (candidates.length > 1) h += `<button class="tab-btn del-btn" onclick="delCand()">✕</button>`;
-  h += `<button class="tab-btn summary-btn${curTab==='summary'?' active':''}" onclick="switchTab('summary')">📋 サマリー</button>`;
+  h += `<button class="tab-btn summary-btn${curTab==='summary'?' active':''}" onclick="switchTab('summary')">${t('tabSummary')}</button>`;
   bar.innerHTML = h;
 }
 
@@ -279,14 +348,14 @@ function renderContent() {
   if (curTab === 'base') {
     area.innerHTML = `
       <div class="card">
-        <div class="section-label">👥 何人で泊まる？</div>
+        <div class="section-label">${t('howMany')}</div>
         <div class="people-selector" id="people-sel"></div>
         <div class="divider"></div>
-        <div class="section-label">名前</div>
+        <div class="section-label">${t('names')}</div>
         <div class="names-grid" id="names-grid"></div>
       </div>`;
     let pills = '';
-    for (let n=1;n<=6;n++) pills+=`<button class="count-pill${base.numPeople===n?' active':''}" onclick="setPeople(${n})">${n}人</button>`;
+    for (let n=1;n<=6;n++) pills+=`<button class="count-pill${base.numPeople===n?' active':''}" onclick="setPeople(${n})">${t('peoplePill',n)}</button>`;
     document.getElementById('people-sel').innerHTML = pills;
     buildNamesGrid();
     for (let i=0;i<base.numPeople;i++) {
@@ -301,49 +370,49 @@ function renderContent() {
     const ci = CI[c.currency]||{f:'🌐',s:c.currency};
     area.innerHTML = `
       <div class="card">
-        <input type="text" class="cand-name-input" id="cand-name" placeholder="📝 候補の名前（例：Central Park近く）" oninput="saveCandName()">
+        <input type="text" class="cand-name-input" id="cand-name" placeholder="${t('candPh')}" oninput="saveCandName()">
       </div>
       <div class="card">
-        <div class="section-label">📅 日程</div>
+        <div class="section-label">${t('dates')}</div>
         <div id="dates-container"></div>
       </div>
       <div class="card">
-        <div class="section-label">💱 通貨・金額</div>
+        <div class="section-label">${t('curAmt')}</div>
         <div class="cur-amount-row">
           <div class="cur-trigger" id="cur-trigger" onclick="toggleCurrencySearch()">
             <span id="selected-pill">${ci.f} ${c.currency}</span><span class="caret">▾</span>
           </div>
           <div class="amount-wrap" style="flex:1">
             <span class="amount-sym" id="sym">${ci.s||c.currency}</span>
-            <input type="number" id="total" min="0" step="1" oninput="saveAndCalc()" placeholder="金額を入力">
+            <input type="number" id="total" min="0" step="1" oninput="saveAndCalc()" placeholder="${t('amtPh')}">
           </div>
         </div>
         <div class="currency-search-panel" id="currency-search-panel">
           <div class="currency-search-wrap">
             <span class="search-icon">🔍</span>
-            <input type="text" id="currency-search" placeholder="アメリカ、USD、yen…" autocomplete="off" oninput="filterCurrencies()" onfocus="openDropdown()">
+            <input type="text" id="currency-search" placeholder="${t('curSearch')}" autocomplete="off" oninput="filterCurrencies()" onfocus="openDropdown()">
             <div class="currency-dropdown" id="currency-dropdown"></div>
           </div>
         </div>
         <div class="jpy-rate-row${c.currency!=='JPY'?' visible':''}" id="jpy-rate-row">
           <span class="jpy-rate-label" id="jpy-rate-label">1 ${c.currency} = ¥</span>
-          <input type="number" id="jpy-rate" min="0" step="0.01" oninput="saveAndCalc()" placeholder="レート">
+          <input type="number" id="jpy-rate" min="0" step="0.01" oninput="saveAndCalc()" placeholder="${t('ratePh')}">
         </div>
       </div>
       <div class="card">
-        <div class="section-label">💸 それぞれの支払い</div>
+        <div class="section-label">${t('payments')}</div>
         <div id="results-grid" class="results-grid"></div>
         <div class="method-note" id="method-note"></div>
       </div>
       <div class="card">
-        <div class="sub-label">🏡 ステイ先の情報</div>
-        <input type="url" class="stay-field" id="stay-url" placeholder="例: https://airbnb.com/..." oninput="updateStayLinks();saveAndCalc()">
-        <a class="stay-link-btn" id="stay-link" href="#" target="_blank" rel="noopener">🏡 ステイを見る</a>
-        <div class="sub-label">📍 ステイ先の住所</div>
-        <input type="url" class="stay-field" id="stay-addr" placeholder="例: https://maps.google.com/..." oninput="updateStayLinks();saveAndCalc()">
-        <a class="stay-link-btn" id="map-link" href="#" target="_blank" rel="noopener">📍 地図を見る</a>
-        <div class="sub-label">📝 メモ</div>
-        <textarea class="stay-field" id="memo" rows="3" placeholder="例：眺め最高！キッチンあり、洗濯機つき 🧺" oninput="saveAndCalc()"></textarea>
+        <div class="sub-label">${t('stayInfo')}</div>
+        <input type="url" class="stay-field" id="stay-url" placeholder="e.g. https://airbnb.com/..." oninput="updateStayLinks();saveAndCalc()">
+        <a class="stay-link-btn" id="stay-link" href="#" target="_blank" rel="noopener">${t('stayLinkBtn')}</a>
+        <div class="sub-label">${t('stayAddrLabel')}</div>
+        <input type="url" class="stay-field" id="stay-addr" placeholder="e.g. https://maps.google.com/..." oninput="updateStayLinks();saveAndCalc()">
+        <a class="stay-link-btn" id="map-link" href="#" target="_blank" rel="noopener">${t('mapLinkBtn')}</a>
+        <div class="sub-label">${t('notes')}</div>
+        <textarea class="stay-field" id="memo" rows="3" placeholder="${t('notesPh')}" oninput="saveAndCalc()"></textarea>
       </div>`;
     const nn=document.getElementById('cand-name'); if(nn) nn.value=c.name||'';
     buildDatesContainer();
@@ -413,7 +482,7 @@ function buildNamesGrid() {
   for (let i=0;i<base.numPeople;i++) {
     const wrap = document.createElement('div'); wrap.className='name-input-wrap';
     wrap.innerHTML = `<button class="emoji-btn" id="emoji-btn-${i}" onclick="openEmojiPicker(${i})">${base.emojis[i]}</button>
-      <input type="text" id="name${i}" placeholder="名前を入力" oninput="saveAndCalc()">
+      <input type="text" id="name${i}" placeholder="${t('namePh')}" oninput="saveAndCalc()">
       <div class="emoji-picker" id="emoji-picker-${i}"></div>`;
     grid.appendChild(wrap);
   }
@@ -426,12 +495,12 @@ function buildDatesContainer() {
     if (i>0) { const d=document.createElement('div'); d.className='divider'; d.style.margin='14px 0'; cont.appendChild(d); }
     const row = document.createElement('div');
     row.innerHTML = `<div class="person-row-header">
-        <span class="person-tag" id="person-tag-${i}">${base.emojis[i]} ${base.names[i]||`メンバー${i+1}`}</span>
+        <span class="person-tag" id="person-tag-${i}">${base.emojis[i]} ${base.names[i]||`${t('member')} ${i+1}`}</span>
         <span class="person-nights-badge" id="nights-${i}">—</span>
       </div>
       <div class="dates-row">
-        <div class="input-group"><label>🔑 チェックイン</label><input type="date" id="checkin-${i}" onchange="saveAndCalc()"></div>
-        <div class="input-group"><label>🔐 チェックアウト</label><input type="date" id="checkout-${i}" onchange="saveAndCalc()"></div>
+        <div class="input-group"><label>${t('checkIn')}</label><input type="date" id="checkin-${i}" onchange="saveAndCalc()"></div>
+        <div class="input-group"><label>${t('checkOut')}</label><input type="date" id="checkout-${i}" onchange="saveAndCalc()"></div>
       </div>`;
     cont.appendChild(row);
   }
@@ -449,11 +518,11 @@ function updateNightsBadges() {
   const c = getCand();
   for (let i=0;i<base.numPeople;i++) {
     const tag=document.getElementById(`person-tag-${i}`);
-    if (tag) tag.textContent=`${base.emojis[i]} ${base.names[i]?.trim()||`メンバー${i+1}`}`;
+    if (tag) tag.textContent=`${base.emojis[i]} ${base.names[i]?.trim()||`${t('member')} ${i+1}`}`;
     const badge=document.getElementById(`nights-${i}`);
     if (badge && c) {
       if (c.checkins[i]&&c.checkouts[i]&&c.checkins[i]<c.checkouts[i])
-        badge.textContent=nightsBetween(c.checkins[i],c.checkouts[i])+'泊';
+        badge.textContent=t('nights',nightsBetween(c.checkins[i],c.checkouts[i]));
       else badge.textContent='—';
     }
   }
@@ -505,11 +574,11 @@ function buildDropdown(filter) {
   const f=(filter||'').toLowerCase();
   const dd=document.getElementById('currency-dropdown'); if(!dd) return;
   const matches=codes.filter(c=>c.toLowerCase().includes(f)||(CI[c]?.n||'').toLowerCase().includes(f)||(JA[c]||'').includes(f));
-  dd.innerHTML=matches.slice(0,80).map(c=>{
+  dd.innerHTML=matches.slice(0,80).map(c=>{ /* eslint-disable-line no-shadow */
     const i=CI[c]||{n:c,f:'🌐'};
     return `<div class="currency-option${c===_currency?' sel':''}" onclick="selectCurrency('${c}')">
       <span>${i.f||'🌐'}</span><span class="code">${c}</span><span class="cname">${i.n||''}</span></div>`;
-  }).join('')||'<div class="currency-option" style="color:var(--mid)">見つかりません</div>';
+  }).join('')||`<div class="currency-option" style="color:var(--mid)">${t('notFound')}</div>`;
 }
 function openDropdown() { buildDropdown(document.getElementById('currency-search')?.value); document.getElementById('currency-dropdown')?.classList.add('open'); }
 function filterCurrencies() { buildDropdown(document.getElementById('currency-search')?.value); document.getElementById('currency-dropdown')?.classList.add('open'); }
@@ -560,7 +629,7 @@ function calcCosts(cand) {
   const people=[];
   for (let i=0;i<base.numPeople;i++) {
     if(!cand.checkins[i]||!cand.checkouts[i]||cand.checkins[i]>=cand.checkouts[i]) return null;
-    people.push({name:base.names[i]?.trim()||`メンバー${i+1}`,emoji:base.emojis[i],checkin:cand.checkins[i],checkout:cand.checkouts[i]});
+    people.push({name:base.names[i]?.trim()||`${t('member')} ${i+1}`,emoji:base.emojis[i],checkin:cand.checkins[i],checkout:cand.checkouts[i]});
   }
   const allDates=[...new Set(people.flatMap(p=>[p.checkin,p.checkout]))].sort();
   if(allDates.length<2) return null;
@@ -593,7 +662,7 @@ function calc() {
   const note=document.getElementById('method-note');
   if(!grid) return;
   const result=calcCosts(c);
-  if(!result){grid.innerHTML='<div class="results-placeholder">基本情報の日程と金額を入力すると計算します</div>';if(note)note.textContent='';return;}
+  if(!result){grid.innerHTML=`<div class="results-placeholder">${t('enterToCalc')}</div>`;if(note)note.textContent='';return;}
   const{people,costs,total,rentalNights,nightlyRate,jpyRate}=result;
   grid.className='results-grid'+(base.numPeople===1?' cols-1':base.numPeople===3||base.numPeople>=5?' cols-3':'');
   const isJPY = c.currency==='JPY';
@@ -608,32 +677,32 @@ function calc() {
       <div class="person-label">${p.emoji} ${p.name}</div>
       <div class="person-amount" style="color:${mc}">${fmt(cost,c.currency)}</div>
       ${jpyLine}
-      <div class="person-meta">${nights}泊<br>🌙 1泊あたり<br><span style="color:${mc};font-weight:600">${fmt(perNight,c.currency)}</span>${(!isJPY&&jpyRate>0)?` <span style="color:var(--red)">≒ ¥${Math.round(perNight*jpyRate).toLocaleString()}</span>`:''}<br><span style="opacity:0.65">📅 1ヶ月あたり（参考）<br><span style="color:${mc};font-weight:600">${fmt(perMonth,c.currency)}</span>${(!isJPY&&jpyRate>0)?` <span style="color:var(--red)">≒ ¥${Math.round(perMonth*jpyRate).toLocaleString()}</span>`:''}</span></div>
+      <div class="person-meta">${t('nights',nights)}<br>🌙 ${t('perNight')}<br><span style="color:${mc};font-weight:600">${fmt(perNight,c.currency)}</span>${(!isJPY&&jpyRate>0)?` <span style="color:var(--red)">≒ ¥${Math.round(perNight*jpyRate).toLocaleString()}</span>`:''}<br><span style="opacity:0.65">📅 ${t('perMonth')}<br><span style="color:${mc};font-weight:600">${fmt(perMonth,c.currency)}</span>${(!isJPY&&jpyRate>0)?` <span style="color:var(--red)">≒ ¥${Math.round(perMonth*jpyRate).toLocaleString()}</span>`:''}</span></div>
     </div>`;
   }).join('');
-  if(note) note.textContent=`合計 ${rentalNights}泊 ／ 1泊 ${fmt(nightlyRate,c.currency)} ／ 泊数・人数ベースで計算`;
+  if(note) note.textContent=t('calcNote',rentalNights,fmt(nightlyRate,c.currency),c.currency);
 }
 
 // ── Summary ───────────────────────────────────────────────────────────────────
 function buildSummaryHTML() {
   const hasAny=candidates.some(c=>c.total&&calcCosts(c));
-  if(!hasAny) return `<div class="summary-card"><div class="summary-empty">候補の金額を入力すると、ここに一覧が表示されます</div></div>`;
+  if(!hasAny) return `<div class="summary-card"><div class="summary-empty">${t('summaryEmpty')}</div></div>`;
   let html='';
   candidates.forEach((c,idx)=>{
     const result=calcCosts(c);
-    if(!result){html+=`<div class="summary-card"><div class="summary-title">候補${idx+1}<span class="summary-total">未入力</span></div></div>`;return;}
+    if(!result){html+=`<div class="summary-card"><div class="summary-title">${t('candNum',idx+1)}<span class="summary-total">${t('notEntered')}</span></div></div>`;return;}
     const{people,costs,total,rentalNights,nightlyRate,jpyRate}=result;
     const ci=CI[c.currency]||{s:c.currency,d:2};
     const fmtC=v=>{const str=ci.d===0?Math.round(v).toLocaleString():v.toFixed(ci.d).replace(/\B(?=(\d{3})+(?!\d))/g,',');return ci.s+str;};
     const firstIn=people.map(p=>p.checkin).sort()[0];
     const lastOut=people.map(p=>p.checkout).sort().reverse()[0];
     const titleLeft = c.name
-      ? `<div><div class="cand-num-badge">候補${idx+1}</div><div>${c.name}</div></div>`
-      : `<div>候補${idx+1}</div>`;
+      ? `<div><div class="cand-num-badge">${t('candNum',idx+1)}</div><div>${c.name}</div></div>`
+      : `<div>${t('candNum',idx+1)}</div>`;
     html+=`<div class="summary-card"><div class="summary-title">${titleLeft}<span class="summary-total">${fmtC(total)}</span></div>`;
-    if(firstIn&&lastOut) html+=`<div class="summary-row"><span class="summary-key">📅 期間</span><span class="summary-val">${firstIn} 〜 ${lastOut}（${rentalNights}泊）</span></div>`;
-    if(c.stayUrl) html+=`<div class="summary-row"><span class="summary-key">🏡 ステイ</span><span class="summary-val"><a class="summary-link" href="${c.stayUrl}" target="_blank" rel="noopener">リンクを開く</a></span></div>`;
-    if(c.stayAddr) html+=`<div class="summary-row"><span class="summary-key">📍 住所</span><span class="summary-val"><a class="summary-link" href="${c.stayAddr}" target="_blank" rel="noopener">地図を開く</a></span></div>`;
+    if(firstIn&&lastOut) html+=`<div class="summary-row"><span class="summary-key">${t('periodLabel')}</span><span class="summary-val">${firstIn} 〜 ${lastOut}（${t('nights',rentalNights)}）</span></div>`;
+    if(c.stayUrl) html+=`<div class="summary-row"><span class="summary-key">${t('stayLabel')}</span><span class="summary-val"><a class="summary-link" href="${c.stayUrl}" target="_blank" rel="noopener">${t('openLink')}</a></span></div>`;
+    if(c.stayAddr) html+=`<div class="summary-row"><span class="summary-key">${t('addrLabel')}</span><span class="summary-val"><a class="summary-link" href="${c.stayAddr}" target="_blank" rel="noopener">${t('openMap')}</a></span></div>`;
     html+=`<div style="margin-top:10px">`;
     people.forEach((p,i)=>{
       const cost=Math.round(costs[i]*100)/100;
@@ -649,15 +718,15 @@ function buildSummaryHTML() {
       html+=`<div class="summary-person">
         <div>
           <div class="summary-person-name">${p.emoji} ${p.name}</div>
-          <div class="summary-person-sub">${nights}泊</div>
-          <div class="summary-person-sub">🌙 1泊あたり <span style="color:${smc};font-weight:600">${fmtC(perNight)}</span>${jpyNight}</div>
-          <div class="summary-person-sub" style="opacity:0.7">📅 1ヶ月あたり（参考） <span style="color:${smc};font-weight:600">${fmtC(perMonth)}</span>${jpyMonth}</div>
+          <div class="summary-person-sub">${t('nights',nights)}</div>
+          <div class="summary-person-sub">🌙 ${t('perNight')} <span style="color:${smc};font-weight:600">${fmtC(perNight)}</span>${jpyNight}</div>
+          <div class="summary-person-sub" style="opacity:0.7">📅 ${t('perMonth')} <span style="color:${smc};font-weight:600">${fmtC(perMonth)}</span>${jpyMonth}</div>
         </div>
         <div style="text-align:right"><div class="summary-person-cost" style="color:${smc}">${fmtC(cost)}</div><div class="summary-person-jpy">${jpyStr}</div></div>
       </div>`;
     });
     html+=`</div>`;
-    if(c.memo) html+=`<div class="summary-row" style="margin-top:8px"><span class="summary-key">📝 メモ</span><span class="summary-val">${c.memo}</span></div>`;
+    if(c.memo) html+=`<div class="summary-row" style="margin-top:8px"><span class="summary-key">${t('memoLabel')}</span><span class="summary-val">${c.memo}</span></div>`;
     html+=`</div>`;
   });
   return html;
@@ -697,10 +766,10 @@ async function copyUrl(){
   saveCurrentState();
   const url=buildUrl();
   try{await navigator.clipboard.writeText(url);}
-  catch(e){prompt('このURLをコピーしてください:',url);return;}
+  catch(e){prompt(t('copyPrompt'),url);return;}
   const btn=document.getElementById('share-btn');
-  btn.textContent='✓ コピーしました！';btn.classList.add('copied');
-  setTimeout(()=>{btn.innerHTML='🔗 このページのURLをコピーして友達に共有';btn.classList.remove('copied');},2500);
+  btn.textContent=t('copied');btn.classList.add('copied');
+  setTimeout(()=>{btn.innerHTML=t('shareBtn');btn.classList.remove('copied');},2500);
 }
 
 function loadFromUrl(){
@@ -739,9 +808,14 @@ const p=new URLSearchParams(search);
   _currency=candidates[typeof curTab==='number'?curTab:0]?.currency||'USD';
 }
 
+// 言語設定を復元
+try{const sl=localStorage.getItem('lang');if(sl==='en'){LANG='en';document.getElementById('lang-ja').classList.remove('active');document.getElementById('lang-en').classList.add('active');document.getElementById('header-title').textContent=t('title');document.getElementById('header-sub').textContent=t('sub');}}catch(e){}
+
 loadFromUrl();
 renderTabs();
 renderContent();
+// シェアボタンのテキストを現在の言語に更新
+document.getElementById('share-btn').textContent=t('shareBtn');
 </script>
 </body>
 </html>
