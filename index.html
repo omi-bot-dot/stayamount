@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🏠 宿泊費を分けよう</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #f5f0eb;
+    color: #2d2d2d;
+    min-height: 100vh;
+    padding: 24px 16px 48px;
+  }
+  h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 8px;
+    letter-spacing: -0.5px;
+  }
+  .subtitle {
+    text-align: center;
+    color: #888;
+    font-size: 0.85rem;
+    margin-bottom: 28px;
+  }
+  .card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+  .card h2 {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 14px;
+  }
+  label {
+    display: block;
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 4px;
+    margin-top: 12px;
+  }
+  label:first-of-type { margin-top: 0; }
+  input[type="text"], input[type="number"], input[type="date"] {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1.5px solid #e8e8e8;
+    border-radius: 10px;
+    font-size: 1rem;
+    color: #2d2d2d;
+    background: #fafafa;
+    transition: border-color 0.2s;
+  }
+  input:focus {
+    outline: none;
+    border-color: #c9a96e;
+    background: #fff;
+  }
+  .row {
+    display: grid;
+    gap: 10px;
+  }
+  .row-2 { grid-template-columns: 1fr 1fr; }
+  .row-3 { grid-template-columns: 1fr 1fr 1fr; }
+
+  .period-list { display: flex; flex-direction: column; gap: 12px; }
+  .period-item {
+    background: #faf8f5;
+    border: 1.5px solid #ede8e1;
+    border-radius: 12px;
+    padding: 14px;
+    position: relative;
+  }
+  .period-item .period-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #c9a96e;
+    margin-bottom: 10px;
+  }
+  .remove-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    color: #ccc;
+    cursor: pointer;
+    font-size: 1.1rem;
+    padding: 2px 6px;
+    border-radius: 6px;
+    transition: color 0.2s, background 0.2s;
+  }
+  .remove-btn:hover { color: #e57373; background: #ffeaea; }
+
+  .people-selector {
+    display: flex;
+    gap: 8px;
+    margin-top: 4px;
+  }
+  .people-btn {
+    flex: 1;
+    padding: 10px;
+    border: 1.5px solid #e8e8e8;
+    border-radius: 10px;
+    background: #fafafa;
+    cursor: pointer;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: #888;
+    transition: all 0.2s;
+    text-align: center;
+  }
+  .people-btn.active {
+    border-color: #c9a96e;
+    background: #fff8ee;
+    color: #c9a96e;
+    font-weight: 700;
+  }
+
+  .add-btn {
+    width: 100%;
+    padding: 12px;
+    border: 2px dashed #e0d8cf;
+    border-radius: 12px;
+    background: none;
+    color: #b0a898;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 4px;
+  }
+  .add-btn:hover { border-color: #c9a96e; color: #c9a96e; background: #fff8ee; }
+
+  .calc-btn {
+    width: 100%;
+    padding: 16px;
+    background: #2d2d2d;
+    color: #fff;
+    border: none;
+    border-radius: 14px;
+    font-size: 1.05rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    letter-spacing: 0.3px;
+  }
+  .calc-btn:hover { background: #444; }
+  .calc-btn:active { transform: scale(0.98); }
+
+  .result-card {
+    display: none;
+    background: #2d2d2d;
+    color: #fff;
+    border-radius: 16px;
+    padding: 22px 20px;
+    margin-bottom: 16px;
+  }
+  .result-card.show { display: block; }
+  .result-card h2 {
+    font-size: 0.85rem;
+    color: #aaa;
+    letter-spacing: 0.5px;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+  }
+  .result-total {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 4px;
+    letter-spacing: -1px;
+  }
+  .result-nights {
+    color: #aaa;
+    font-size: 0.85rem;
+    margin-bottom: 18px;
+  }
+  .divider {
+    border: none;
+    border-top: 1px solid #444;
+    margin: 16px 0;
+  }
+  .person-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+  }
+  .person-name {
+    font-size: 0.95rem;
+    font-weight: 600;
+  }
+  .person-amount {
+    text-align: right;
+  }
+  .person-amount .amount {
+    font-size: 1.3rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+  }
+  .person-amount .per-night {
+    font-size: 0.75rem;
+    color: #aaa;
+  }
+  .breakdown-toggle {
+    background: none;
+    border: 1px solid #555;
+    color: #aaa;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    margin-top: 4px;
+    transition: all 0.2s;
+    width: 100%;
+  }
+  .breakdown-toggle:hover { border-color: #888; color: #fff; }
+  .breakdown-table {
+    display: none;
+    margin-top: 12px;
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .breakdown-table.show { display: table; }
+  .breakdown-table th {
+    font-size: 0.75rem;
+    color: #888;
+    text-align: left;
+    padding: 4px 6px;
+    border-bottom: 1px solid #444;
+    font-weight: 500;
+  }
+  .breakdown-table td {
+    font-size: 0.82rem;
+    padding: 6px 6px;
+    border-bottom: 1px solid #3a3a3a;
+    color: #ddd;
+  }
+  .breakdown-table td:last-child { text-align: right; }
+
+  .error {
+    background: #fff3f3;
+    border: 1px solid #ffcdd2;
+    color: #c62828;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 0.85rem;
+    margin-bottom: 12px;
+    display: none;
+  }
+  .error.show { display: block; }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 14px;
+  }
+  .stat-box {
+    background: #3a3a3a;
+    border-radius: 10px;
+    padding: 12px;
+  }
+  .stat-label { font-size: 0.72rem; color: #aaa; margin-bottom: 4px; }
+  .stat-value { font-size: 1rem; font-weight: 700; }
+</style>
+</head>
+<body>
+
+<h1>🏠 宿泊費を分けよう</h1>
+<p class="subtitle">期間ごとの人数で公平に計算</p>
+
+<div class="error" id="errorMsg"></div>
+
+<div class="card">
+  <h2>宿泊情報</h2>
+  <label>宿泊先の名前（任意）</label>
+  <input type="text" id="placeName" placeholder="例：Airbnb 渋谷">
+  <label>合計費用（円）</label>
+  <input type="number" id="totalCost" placeholder="例：120000" min="0">
+  <div class="row row-2" style="margin-top:12px">
+    <div>
+      <label>チェックイン</label>
+      <input type="date" id="checkIn">
+    </div>
+    <div>
+      <label>チェックアウト</label>
+      <input type="date" id="checkOut">
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <h2>人の名前（任意）</h2>
+  <div class="row row-2">
+    <div>
+      <label>ひとり目</label>
+      <input type="text" id="name1" placeholder="例：A">
+    </div>
+    <div>
+      <label>ふたり目</label>
+      <input type="text" id="name2" placeholder="例：B">
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <h2>期間ごとの人数</h2>
+  <div class="period-list" id="periodList"></div>
+  <button class="add-btn" onclick="addPeriod()">＋ 期間を追加</button>
+</div>
+
+<button class="calc-btn" onclick="calculate()">計算する</button>
+
+<div class="result-card" id="resultCard">
+  <h2>計算結果</h2>
+  <div class="result-total" id="resultTotal"></div>
+  <div class="result-nights" id="resultNights"></div>
+  <hr class="divider">
+  <div id="personResults"></div>
+  <div class="stats-grid" id="statsGrid"></div>
+  <hr class="divider">
+  <button class="breakdown-toggle" onclick="toggleBreakdown()">明細を見る ▾</button>
+  <table class="breakdown-table" id="breakdownTable">
+    <thead>
+      <tr>
+        <th>期間</th>
+        <th>人数</th>
+        <th>泊数</th>
+        <th>各自負担</th>
+      </tr>
+    </thead>
+    <tbody id="breakdownBody"></tbody>
+  </table>
+</div>
+
+<script>
+let periodCount = 0;
+
+function addPeriod(startDate = '', endDate = '', people = 1) {
+  periodCount++;
+  const id = periodCount;
+  const list = document.getElementById('periodList');
+  const div = document.createElement('div');
+  div.className = 'period-item';
+  div.id = 'period-' + id;
+  div.innerHTML = `
+    <div class="period-label">期間 ${list.children.length + 1}</div>
+    <button class="remove-btn" onclick="removePeriod(${id})">✕</button>
+    <div class="row row-2">
+      <div>
+        <label>開始日</label>
+        <input type="date" id="start-${id}" value="${startDate}">
+      </div>
+      <div>
+        <label>終了日</label>
+        <input type="date" id="end-${id}" value="${endDate}">
+      </div>
+    </div>
+    <label>この期間の人数</label>
+    <div class="people-selector">
+      <button class="people-btn ${people===1?'active':''}" onclick="setPeople(${id},1,this)">🧳 1人</button>
+      <button class="people-btn ${people===2?'active':''}" onclick="setPeople(${id},2,this)">🤝 2人</button>
+    </div>
+    <input type="hidden" id="people-${id}" value="${people}">
+  `;
+  list.appendChild(div);
+  renumberPeriods();
+}
+
+function removePeriod(id) {
+  const el = document.getElementById('period-' + id);
+  if (el) el.remove();
+  renumberPeriods();
+}
+
+function renumberPeriods() {
+  const items = document.querySelectorAll('.period-item .period-label');
+  items.forEach((el, i) => el.textContent = `期間 ${i + 1}`);
+}
+
+function setPeople(id, n, btn) {
+  document.getElementById('people-' + id).value = n;
+  btn.closest('.people-selector').querySelectorAll('.people-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function showError(msg) {
+  const el = document.getElementById('errorMsg');
+  el.textContent = msg;
+  el.classList.add('show');
+}
+function clearError() {
+  document.getElementById('errorMsg').classList.remove('show');
+}
+
+function daysBetween(a, b) {
+  return Math.round((new Date(b) - new Date(a)) / 86400000);
+}
+
+function fmt(n) {
+  return '¥' + Math.round(n).toLocaleString('ja-JP');
+}
+
+function calculate() {
+  clearError();
+  const totalCost = parseFloat(document.getElementById('totalCost').value);
+  const checkIn = document.getElementById('checkIn').value;
+  const checkOut = document.getElementById('checkOut').value;
+  const n1 = document.getElementById('name1').value || 'Aさん';
+  const n2 = document.getElementById('name2').value || 'Bさん';
+
+  if (!totalCost || totalCost <= 0) return showError('合計費用を入力してください');
+  if (!checkIn || !checkOut) return showError('チェックイン・アウト日を入力してください');
+  if (checkIn >= checkOut) return showError('チェックアウトはチェックインより後の日にしてください');
+
+  const totalNights = daysBetween(checkIn, checkOut);
+  const perNight = totalCost / totalNights;
+
+  const items = document.querySelectorAll('.period-item');
+  if (items.length === 0) return showError('期間を1つ以上追加してください');
+
+  let periods = [];
+  for (const item of items) {
+    const id = item.id.replace('period-', '');
+    const start = document.getElementById('start-' + id).value;
+    const end = document.getElementById('end-' + id).value;
+    const people = parseInt(document.getElementById('people-' + id).value);
+    if (!start || !end) return showError('すべての期間に開始日・終了日を入力してください');
+    if (start >= end) return showError('期間の終了日は開始日より後にしてください');
+    if (start < checkIn || end > checkOut) return showError('期間はチェックイン〜アウトの範囲内にしてください');
+    periods.push({ start, end, people, nights: daysBetween(start, end) });
+  }
+
+  const coveredNights = periods.reduce((s, p) => s + p.nights, 0);
+  if (coveredNights !== totalNights) {
+    return showError(`期間の合計（${coveredNights}泊）が全体（${totalNights}泊）と一致しません`);
+  }
+
+  let pay1 = 0, pay2 = 0;
+  const rows = [];
+
+  for (const p of periods) {
+    const cost = perNight * p.nights;
+    let each1, each2;
+    if (p.people === 1) {
+      each1 = cost; each2 = 0;
+    } else {
+      each1 = cost / 2; each2 = cost / 2;
+    }
+    pay1 += each1;
+    pay2 += each2;
+    rows.push({ ...p, cost, each1, each2 });
+  }
+
+  const perNight1 = pay1 / totalNights;
+  const perNight2 = pay2 / totalNights;
+  const perMonth1 = perNight1 * 30.4375;
+  const perMonth2 = perNight2 * 30.4375;
+
+  document.getElementById('resultTotal').textContent = fmt(totalCost);
+  document.getElementById('resultNights').textContent =
+    `${(document.getElementById('placeName').value || '宿泊費')} ・ ${totalNights}泊`;
+
+  let personHTML = '';
+  personHTML += `<div class="person-row">
+    <div class="person-name">🧳 ${n1}</div>
+    <div class="person-amount">
+      <div class="amount">${fmt(pay1)}</div>
+      <div class="per-night">1泊あたり ${fmt(perNight1)} ／ 月換算 ${fmt(perMonth1)}</div>
+    </div>
+  </div>`;
+  if (pay2 > 0) {
+    personHTML += `<div class="person-row">
+      <div class="person-name">🤝 ${n2}</div>
+      <div class="person-amount">
+        <div class="amount">${fmt(pay2)}</div>
+        <div class="per-night">1泊あたり ${fmt(perNight2)} ／ 月換算 ${fmt(perMonth2)}</div>
+      </div>
+    </div>`;
+  }
+  document.getElementById('personResults').innerHTML = personHTML;
+
+  document.getElementById('statsGrid').innerHTML = `
+    <div class="stat-box">
+      <div class="stat-label">全体の1泊単価</div>
+      <div class="stat-value">${fmt(perNight)}</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-label">滞在期間</div>
+      <div class="stat-value">${totalNights}泊</div>
+    </div>
+  `;
+
+  const tbody = document.getElementById('breakdownBody');
+  tbody.innerHTML = '';
+  rows.forEach(r => {
+    const startFmt = r.start.replace(/^(\d{4})-(\d{2})-(\d{2})$/, '$2/$3');
+    const endFmt = r.end.replace(/^(\d{4})-(\d{2})-(\d{2})$/, '$2/$3');
+    const eachStr = r.people === 1
+      ? `${n1}: ${fmt(r.each1)}`
+      : `各 ${fmt(r.each1)}`;
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${startFmt}〜${endFmt}</td><td>${r.people}人</td><td>${r.nights}泊</td><td>${eachStr}</td>`;
+    tbody.appendChild(tr);
+  });
+
+  const resultCard = document.getElementById('resultCard');
+  resultCard.classList.add('show');
+  resultCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  document.getElementById('breakdownTable').classList.remove('show');
+}
+
+function toggleBreakdown() {
+  const table = document.getElementById('breakdownTable');
+  const btn = document.querySelector('.breakdown-toggle');
+  if (table.classList.contains('show')) {
+    table.classList.remove('show');
+    btn.textContent = '明細を見る ▾';
+  } else {
+    table.classList.add('show');
+    btn.textContent = '明細を閉じる ▴';
+  }
+}
+
+// 初期の期間を1つ追加
+addPeriod();
+</script>
+</body>
+</html>
