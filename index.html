@@ -308,6 +308,7 @@ const TR = {
 function t(key,...a){const v=TR[LANG][key];return typeof v==='function'?v(...a):v;}
 function setLang(l){
   LANG=l;
+  document.documentElement.lang=l==='en'?'en':'ja';
   document.getElementById('lang-ja').classList.toggle('active',l==='ja');
   document.getElementById('lang-en').classList.toggle('active',l==='en');
   document.getElementById('header-title').textContent=t('title');
