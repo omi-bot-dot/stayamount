@@ -708,11 +708,7 @@ function loadFromUrl(){
   if(!search||!new URLSearchParams(search).has('b_n')){
     try{const saved=localStorage.getItem('airbnb_split_url');if(saved){const q=saved.split('?')[1];if(q)search='?'+q;}}catch(e){}
   }
-  // デフォルト値（URLパラメータもlocalStorageもない場合）
-  if(!search||!new URLSearchParams(search).has('b_n')){
-    search='?ct=0&b_n=1&b_nm0=%E3%81%8A%E3%81%BF&b_em0=%F0%9F%8C%BB&nc=4&c0_name=%E3%83%96%E3%83%AB%E3%83%83%E3%82%AF%E3%83%AA%E3%83%B3%EF%BC%88%E3%82%A8%E3%82%A2%E3%83%93%E3%83%BC%EF%BC%89&c0_cur=JPY&c0_t=489433&c0_r=155&c0_ci0=2026-06-17&c0_co0=2026-08-18&c1_name=%E3%82%AF%E3%82%A4%E3%83%BC%E3%83%B3%E3%82%BA&c1_cur=USD&c1_t=2100&c1_r=159.25&c1_ci0=2026-06-17&c1_co0=2026-08-18&c2_name=%E3%82%AF%E3%82%A4%E3%83%BC%E3%83%B3%E3%82%BA%EF%BC%88%E3%82%A8%E3%82%A2%E3%83%93%E3%83%BC%EF%BC%89&c2_cur=JPY&c2_t=583843&c2_r=155&c2_ci0=2026-06-17&c2_co0=2026-08-18&c3_name=%E3%83%AA%E3%83%88%E3%83%AB%E3%83%BB%E3%83%9E%E3%83%AB%E3%82%BB%E3%83%A9%EF%BC%88%E3%82%A8%E3%82%A2%E3%83%93%E3%83%BC%EF%BC%89&c3_cur=JPY&c3_t=550357&c3_r=155&c3_ci0=2026-06-17&c3_co0=2026-08-18';
-  }
-  const p=new URLSearchParams(search);
+const p=new URLSearchParams(search);
   if(!p.has('b_n')&&!p.has('nc')) return;
   base=makeBase();
   base.numPeople=parseInt(p.get('b_n'))||2;
