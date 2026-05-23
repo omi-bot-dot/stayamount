@@ -3,535 +3,749 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🏠 宿泊費を分けよう</title>
+<title>✈️ ステイ代を分けよう</title>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    background: #f5f0eb;
-    color: #2d2d2d;
-    min-height: 100vh;
-    padding: 24px 16px 48px;
-  }
-  h1 {
-    font-size: 1.5rem;
-    font-weight: 700;
-    text-align: center;
-    margin-bottom: 8px;
-    letter-spacing: -0.5px;
-  }
-  .subtitle {
-    text-align: center;
-    color: #888;
-    font-size: 0.85rem;
-    margin-bottom: 28px;
-  }
-  .card {
-    background: #fff;
-    border-radius: 16px;
-    padding: 20px;
-    margin-bottom: 16px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-  }
-  .card h2 {
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: #888;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-bottom: 14px;
-  }
-  label {
-    display: block;
-    font-size: 0.85rem;
-    color: #666;
-    margin-bottom: 4px;
-    margin-top: 12px;
-  }
-  label:first-of-type { margin-top: 0; }
-  input[type="text"], input[type="number"], input[type="date"] {
-    width: 100%;
-    padding: 10px 12px;
-    border: 1.5px solid #e8e8e8;
-    border-radius: 10px;
-    font-size: 1rem;
-    color: #2d2d2d;
-    background: #fafafa;
-    transition: border-color 0.2s;
-  }
-  input:focus {
-    outline: none;
-    border-color: #c9a96e;
-    background: #fff;
-  }
-  .row {
-    display: grid;
-    gap: 10px;
-  }
-  .row-2 { grid-template-columns: 1fr 1fr; }
-  .row-3 { grid-template-columns: 1fr 1fr 1fr; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --red: #FF5A5F; --teal: #00A699; --dark: #484848;
+  --mid: #767676; --border: #EBEBEB; --bg: #F7F7F7; --white: #fff;
+  --red-light: #FFF2F2; --teal-light: #F0FAFA; --teal-border: #B2E0DB;
+}
+body { font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Helvetica Neue', sans-serif; background: var(--bg); min-height: 100vh; padding: 20px 16px 60px; color: var(--dark); }
 
-  .period-list { display: flex; flex-direction: column; gap: 12px; }
-  .period-item {
-    background: #faf8f5;
-    border: 1.5px solid #ede8e1;
-    border-radius: 12px;
-    padding: 14px;
-    position: relative;
-  }
-  .period-item .period-label {
-    font-size: 0.8rem;
-    font-weight: 600;
-    color: #c9a96e;
-    margin-bottom: 10px;
-  }
-  .remove-btn {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: none;
-    border: none;
-    color: #ccc;
-    cursor: pointer;
-    font-size: 1.1rem;
-    padding: 2px 6px;
-    border-radius: 6px;
-    transition: color 0.2s, background 0.2s;
-  }
-  .remove-btn:hover { color: #e57373; background: #ffeaea; }
+.header { max-width: 620px; margin: 0 auto 16px; display: flex; align-items: center; gap: 12px; }
+.airbnb-logo { width: 36px; height: 36px; background: var(--red); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.airbnb-logo svg { width: 20px; height: 20px; fill: white; }
+.header-text h1 { font-size: 1.2rem; font-weight: 700; color: var(--dark); }
+.header-text p  { font-size: 0.78rem; color: var(--mid); margin-top: 1px; }
 
-  .people-selector {
-    display: flex;
-    gap: 8px;
-    margin-top: 4px;
-  }
-  .people-btn {
-    flex: 1;
-    padding: 10px;
-    border: 1.5px solid #e8e8e8;
-    border-radius: 10px;
-    background: #fafafa;
-    cursor: pointer;
-    font-size: 0.95rem;
-    font-weight: 500;
-    color: #888;
-    transition: all 0.2s;
-    text-align: center;
-  }
-  .people-btn.active {
-    border-color: #c9a96e;
-    background: #fff8ee;
-    color: #c9a96e;
-    font-weight: 700;
-  }
+.tab-bar { display: flex; gap: 4px; max-width: 620px; margin: 0 auto 14px; background: var(--white); border: 1px solid var(--border); border-radius: 14px; padding: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.07); overflow-x: auto; }
+.tab-bar::-webkit-scrollbar { display: none; }
+.tab-btn { flex-shrink: 0; padding: 8px 14px; border: none; background: none; border-radius: 10px; font-size: 0.85rem; font-weight: 600; color: var(--mid); cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+.tab-btn.active { background: var(--red); color: white; }
+.tab-btn.base-btn.active { background: var(--teal); color: white; }
+.tab-btn.add-btn { color: var(--red); font-size: 1rem; padding: 6px 12px; }
+.tab-btn.summary-btn { color: var(--teal); }
+.tab-btn.summary-btn.active { background: var(--teal); color: white; }
+.tab-btn.del-btn { color: var(--mid); font-size: 0.75rem; padding: 6px 8px; }
 
-  .add-btn {
-    width: 100%;
-    padding: 12px;
-    border: 2px dashed #e0d8cf;
-    border-radius: 12px;
-    background: none;
-    color: #b0a898;
-    font-size: 0.9rem;
-    cursor: pointer;
-    transition: all 0.2s;
-    margin-top: 4px;
-  }
-  .add-btn:hover { border-color: #c9a96e; color: #c9a96e; background: #fff8ee; }
+.card { background: var(--white); border: 1px solid var(--border); border-radius: 16px; padding: 20px; max-width: 620px; margin: 0 auto 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); }
 
-  .calc-btn {
-    width: 100%;
-    padding: 16px;
-    background: #2d2d2d;
-    color: #fff;
-    border: none;
-    border-radius: 14px;
-    font-size: 1.05rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background 0.2s, transform 0.1s;
-    letter-spacing: 0.3px;
-  }
-  .calc-btn:hover { background: #444; }
-  .calc-btn:active { transform: scale(0.98); }
+.section-label { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--mid); margin-bottom: 10px; }
+.sub-label { font-size: 0.72rem; font-weight: 700; color: var(--mid); margin-bottom: 6px; margin-top: 14px; }
+.sub-label:first-child { margin-top: 0; }
+.divider { height: 1px; background: var(--border); margin: 14px 0; }
 
-  .result-card {
-    display: none;
-    background: #2d2d2d;
-    color: #fff;
-    border-radius: 16px;
-    padding: 22px 20px;
-    margin-bottom: 16px;
-  }
-  .result-card.show { display: block; }
-  .result-card h2 {
-    font-size: 0.85rem;
-    color: #aaa;
-    letter-spacing: 0.5px;
-    margin-bottom: 16px;
-    text-transform: uppercase;
-  }
-  .result-total {
-    font-size: 2rem;
-    font-weight: 700;
-    margin-bottom: 4px;
-    letter-spacing: -1px;
-  }
-  .result-nights {
-    color: #aaa;
-    font-size: 0.85rem;
-    margin-bottom: 18px;
-  }
-  .divider {
-    border: none;
-    border-top: 1px solid #444;
-    margin: 16px 0;
-  }
-  .person-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 12px;
-  }
-  .person-name {
-    font-size: 0.95rem;
-    font-weight: 600;
-  }
-  .person-amount {
-    text-align: right;
-  }
-  .person-amount .amount {
-    font-size: 1.3rem;
-    font-weight: 700;
-    letter-spacing: -0.5px;
-  }
-  .person-amount .per-night {
-    font-size: 0.75rem;
-    color: #aaa;
-  }
-  .breakdown-toggle {
-    background: none;
-    border: 1px solid #555;
-    color: #aaa;
-    padding: 8px 14px;
-    border-radius: 8px;
-    font-size: 0.8rem;
-    cursor: pointer;
-    margin-top: 4px;
-    transition: all 0.2s;
-    width: 100%;
-  }
-  .breakdown-toggle:hover { border-color: #888; color: #fff; }
-  .breakdown-table {
-    display: none;
-    margin-top: 12px;
-    width: 100%;
-    border-collapse: collapse;
-  }
-  .breakdown-table.show { display: table; }
-  .breakdown-table th {
-    font-size: 0.75rem;
-    color: #888;
-    text-align: left;
-    padding: 4px 6px;
-    border-bottom: 1px solid #444;
-    font-weight: 500;
-  }
-  .breakdown-table td {
-    font-size: 0.82rem;
-    padding: 6px 6px;
-    border-bottom: 1px solid #3a3a3a;
-    color: #ddd;
-  }
-  .breakdown-table td:last-child { text-align: right; }
+.people-selector { display: flex; gap: 8px; }
+.count-pill { flex: 1; padding: 9px 0; text-align: center; border: 1.5px solid var(--border); border-radius: 12px; font-size: 0.88rem; font-weight: 600; color: var(--mid); cursor: pointer; transition: all 0.15s; background: var(--white); }
+.count-pill.active { border-color: var(--red); background: var(--red-light); color: var(--red); }
 
-  .error {
-    background: #fff3f3;
-    border: 1px solid #ffcdd2;
-    color: #c62828;
-    border-radius: 10px;
-    padding: 10px 14px;
-    font-size: 0.85rem;
-    margin-bottom: 12px;
-    display: none;
-  }
-  .error.show { display: block; }
+.names-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.name-input-wrap { position: relative; }
+.emoji-btn { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; font-size: 18px; cursor: pointer; padding: 0; line-height: 1; z-index: 1; }
+.name-input-wrap input[type="text"] { width: 100%; padding: 11px 12px 11px 38px; border: 1.5px solid var(--border); border-radius: 12px; font-size: 0.95rem; color: var(--dark); outline: none; background: var(--white); transition: border-color 0.2s; }
+.name-input-wrap input[type="text"]:focus { border-color: var(--teal); }
+.emoji-picker { display: none; position: absolute; top: calc(100% + 6px); left: 0; background: white; border: 1.5px solid var(--border); border-radius: 14px; padding: 10px; box-shadow: 0 8px 24px rgba(0,0,0,0.12); z-index: 200; flex-wrap: wrap; gap: 4px; width: 220px; }
+.emoji-picker.open { display: flex; }
+.emoji-picker button { background: none; border: none; font-size: 22px; cursor: pointer; border-radius: 8px; padding: 4px 6px; }
+.emoji-picker button:hover { background: var(--red-light); }
 
-  .stats-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    margin-top: 14px;
-  }
-  .stat-box {
-    background: #3a3a3a;
-    border-radius: 10px;
-    padding: 12px;
-  }
-  .stat-label { font-size: 0.72rem; color: #aaa; margin-bottom: 4px; }
-  .stat-value { font-size: 1rem; font-weight: 700; }
+.dates-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.input-group label { display: block; font-size: 0.75rem; color: var(--mid); margin-bottom: 5px; font-weight: 500; }
+.person-row-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.person-tag { font-size: 0.88rem; font-weight: 700; color: var(--dark); }
+.person-nights-badge { background: var(--teal); color: white; font-size: 0.78rem; font-weight: 700; padding: 3px 10px; border-radius: 20px; }
+input[type="date"] { width: 100%; padding: 10px 11px; border: 1.5px solid var(--border); border-radius: 12px; font-size: 0.88rem; color: var(--dark); outline: none; background: var(--white); transition: border-color 0.2s; -webkit-appearance: none; }
+input[type="date"]:focus { border-color: var(--teal); }
+
+.cur-amount-row { display: flex; gap: 10px; align-items: center; }
+.cur-trigger { display: inline-flex; align-items: center; gap: 5px; background: var(--red); color: white; border-radius: 12px; padding: 13px 14px; font-size: 0.88rem; font-weight: 700; cursor: pointer; white-space: nowrap; flex-shrink: 0; user-select: none; }
+.cur-trigger .caret { font-size: 0.7rem; opacity: 0.8; }
+.currency-search-panel { display: none; margin-top: 10px; }
+.currency-search-panel.open { display: block; }
+.currency-search-wrap { position: relative; }
+.search-icon { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); color: var(--mid); font-size: 14px; pointer-events: none; }
+.currency-search-wrap input[type="text"] { width: 100%; padding: 11px 12px 11px 36px; border: 1.5px solid var(--border); border-radius: 12px; font-size: 0.95rem; color: var(--dark); outline: none; background: var(--white); transition: border-color 0.2s; }
+.currency-search-wrap input[type="text"]:focus { border-color: var(--red); }
+.currency-dropdown { display: none; position: absolute; top: calc(100% + 4px); left: 0; right: 0; background: var(--white); border: 1.5px solid var(--border); border-radius: 12px; max-height: 200px; overflow-y: auto; z-index: 100; box-shadow: 0 8px 24px rgba(0,0,0,0.11); }
+.currency-dropdown.open { display: block; }
+.currency-option { padding: 9px 14px; cursor: pointer; font-size: 0.88rem; display: flex; align-items: center; gap: 8px; transition: background 0.1s; }
+.currency-option:hover, .currency-option.sel { background: var(--red-light); }
+.currency-option .code { font-weight: 700; min-width: 38px; color: var(--dark); }
+.currency-option .cname { color: var(--mid); font-size: 0.8rem; }
+.amount-wrap { position: relative; }
+.amount-sym { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-weight: 700; font-size: 1rem; color: var(--red); pointer-events: none; white-space: nowrap; }
+#total { width: 100%; padding: 13px 14px 13px 42px; border: 1.5px solid var(--border); border-radius: 12px; font-size: 1.1rem; color: var(--dark); outline: none; background: var(--white); transition: border-color 0.2s; -webkit-appearance: none; }
+#total:focus { border-color: var(--red); }
+.jpy-rate-row { display: none; align-items: center; gap: 10px; margin-top: 12px; }
+.jpy-rate-row.visible { display: flex; }
+.jpy-rate-label { font-size: 0.85rem; color: var(--mid); white-space: nowrap; flex-shrink: 0; }
+.jpy-rate-row input[type="number"] { flex: 1; padding: 9px 12px; border: 1.5px solid var(--border); border-radius: 12px; font-size: 0.95rem; color: var(--dark); outline: none; background: var(--white); transition: border-color 0.2s; -webkit-appearance: none; }
+
+.stay-field { width: 100%; padding: 10px 12px; border: 1.5px solid var(--border); border-radius: 12px; font-size: 0.9rem; color: var(--dark); outline: none; background: var(--white); transition: border-color 0.2s; margin-bottom: 8px; }
+.stay-field:focus { border-color: var(--red); }
+textarea.stay-field { resize: vertical; font-family: inherit; }
+.stay-link-btn { display: none; align-items: center; gap: 6px; background: var(--teal-light); border: 1.5px solid var(--teal-border); color: var(--teal); border-radius: 10px; padding: 8px 14px; font-size: 0.85rem; font-weight: 600; text-decoration: none; transition: all 0.15s; margin-top: -2px; margin-bottom: 10px; }
+.stay-link-btn:hover { background: var(--teal); color: white; }
+.stay-link-btn.show { display: inline-flex; }
+
+.results-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.results-grid.cols-1 { grid-template-columns: 1fr; }
+.results-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+.results-placeholder { text-align: center; color: var(--mid); font-size: 0.88rem; padding: 20px 0; }
+.person-box { background: var(--white); border-radius: 12px; padding: 13px; text-align: center; border: 1.5px solid var(--border); }
+.person-label  { font-size: 0.75rem; color: var(--mid); margin-bottom: 5px; }
+.person-amount { font-size: 1.3rem; font-weight: 700; color: var(--dark); letter-spacing: -0.02em; }
+.person-pct    { font-size: 0.74rem; color: var(--mid); margin-top: 3px; }
+.person-jpy    { font-size: 0.78rem; color: var(--teal); margin-top: 4px; font-weight: 600; }
+.person-meta   { font-size: 0.72rem; color: var(--mid); margin-top: 6px; padding-top: 6px; border-top: 1px solid var(--border); line-height: 1.6; }
+.method-note   { font-size: 0.74rem; color: var(--mid); margin-top: 12px; line-height: 1.5; }
+
+.summary-card { background: var(--white); border: 1px solid var(--border); border-radius: 16px; padding: 20px; max-width: 620px; margin: 0 auto 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); }
+.summary-title { font-size: 1rem; font-weight: 700; color: var(--dark); margin-bottom: 14px; display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+.cand-num-badge { display: inline-block; background: var(--red-light); color: var(--red); font-size: 0.68rem; font-weight: 700; padding: 2px 8px; border-radius: 20px; margin-bottom: 4px; }
+.summary-total { font-size: 0.85rem; color: var(--mid); font-weight: 400; }
+.summary-row { display: flex; align-items: flex-start; gap: 8px; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 0.88rem; }
+.summary-row:last-child { border-bottom: none; }
+.summary-key { color: var(--mid); flex-shrink: 0; min-width: 70px; }
+.summary-val { color: var(--dark); font-weight: 500; word-break: break-all; }
+.summary-person { display: flex; justify-content: space-between; align-items: center; padding: 9px 0; border-bottom: 1px solid var(--border); }
+.summary-person:last-child { border-bottom: none; }
+.summary-person-name { font-size: 0.88rem; color: var(--dark); font-weight: 500; }
+.summary-person-sub  { font-size: 0.72rem; color: var(--mid); margin-top: 1px; }
+.summary-person-cost { font-size: 1rem; font-weight: 700; color: var(--red); }
+.summary-person-jpy  { font-size: 0.72rem; color: var(--teal); font-weight: 500; }
+.summary-link { color: var(--teal); text-decoration: none; font-size: 0.82rem; }
+.summary-link:hover { text-decoration: underline; }
+.summary-empty { text-align: center; color: var(--mid); font-size: 0.88rem; padding: 30px 0; }
+
+.cand-name-input { width:100%; padding:12px 14px; border:1.5px solid var(--border); border-radius:12px; font-size:1rem; font-weight:600; color:var(--dark); outline:none; background:var(--white); transition:border-color 0.2s; }
+.cand-name-input:focus { border-color:var(--red); }
+.cand-name-input::placeholder { font-weight:400; color:var(--mid); }
+.share-btn { display: flex; align-items: center; justify-content: center; gap: 7px; width: 100%; max-width: 620px; margin: 0 auto 14px; padding: 13px; background: var(--white); border: 1.5px solid var(--border); border-radius: 12px; font-size: 0.9rem; font-weight: 600; color: var(--dark); cursor: pointer; transition: all 0.2s; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+.share-btn:hover { border-color: var(--red); color: var(--red); }
+.share-btn.copied { border-color: var(--teal); color: var(--teal); }
+.currency-dropdown::-webkit-scrollbar { width: 4px; }
+.currency-dropdown::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
 </style>
 </head>
 <body>
 
-<h1>🏠 宿泊費を分けよう</h1>
-<p class="subtitle">期間ごとの人数で公平に計算</p>
-
-<div class="error" id="errorMsg"></div>
-
-<div class="card">
-  <h2>宿泊情報</h2>
-  <label>宿泊先の名前（任意）</label>
-  <input type="text" id="placeName" placeholder="例：Airbnb 渋谷">
-  <label>合計費用（円）</label>
-  <input type="number" id="totalCost" placeholder="例：120000" min="0">
-  <div class="row row-2" style="margin-top:12px">
-    <div>
-      <label>チェックイン</label>
-      <input type="date" id="checkIn">
-    </div>
-    <div>
-      <label>チェックアウト</label>
-      <input type="date" id="checkOut">
-    </div>
+<div class="header">
+  <div class="airbnb-logo">
+    <svg viewBox="0 0 24 24"><path d="M12 2C9.8 2 8 4.5 8 7.5c0 1.5.4 2.9 1.1 3.9C7.3 12.5 6 14.2 6 16c0 2.2 1.8 4 6 4s6-1.8 6-4c0-1.8-1.3-3.5-3.1-4.6.7-1 1.1-2.4 1.1-3.9C16 4.5 14.2 2 12 2zm0 2c1.1 0 2 1.6 2 3.5 0 1.1-.3 2-.8 2.7-.4-.1-.8-.2-1.2-.2s-.8.1-1.2.2C10.3 9.5 10 8.6 10 7.5 10 5.6 10.9 4 12 4zm0 7.5c.6 0 1.1.1 1.6.3C14.5 12.7 15 14 15 15c0 .5-.1 1-.3 1.4-.7.4-1.7.6-2.7.6s-2-.2-2.7-.6C9.1 16 9 15.5 9 15c0-1 .5-2.3 1.4-3.2.5-.2 1-.3 1.6-.3z"/></svg>
+  </div>
+  <div class="header-text">
+    <h1>✈️ ステイ代を分けよう</h1>
+    <p>🏠 入力するとリアルタイムで計算します</p>
   </div>
 </div>
 
-<div class="card">
-  <h2>人の名前（任意）</h2>
-  <div class="row row-2">
-    <div>
-      <label>ひとり目</label>
-      <input type="text" id="name1" placeholder="例：A">
-    </div>
-    <div>
-      <label>ふたり目</label>
-      <input type="text" id="name2" placeholder="例：B">
-    </div>
-  </div>
-</div>
-
-<div class="card">
-  <h2>期間ごとの人数</h2>
-  <div class="period-list" id="periodList"></div>
-  <button class="add-btn" onclick="addPeriod()">＋ 期間を追加</button>
-</div>
-
-<button class="calc-btn" onclick="calculate()">計算する</button>
-
-<div class="result-card" id="resultCard">
-  <h2>計算結果</h2>
-  <div class="result-total" id="resultTotal"></div>
-  <div class="result-nights" id="resultNights"></div>
-  <hr class="divider">
-  <div id="personResults"></div>
-  <div class="stats-grid" id="statsGrid"></div>
-  <hr class="divider">
-  <button class="breakdown-toggle" onclick="toggleBreakdown()">明細を見る ▾</button>
-  <table class="breakdown-table" id="breakdownTable">
-    <thead>
-      <tr>
-        <th>期間</th>
-        <th>人数</th>
-        <th>泊数</th>
-        <th>各自負担</th>
-      </tr>
-    </thead>
-    <tbody id="breakdownBody"></tbody>
-  </table>
-</div>
+<div class="tab-bar" id="tab-bar"></div>
+<div id="content-area"></div>
+<button class="share-btn" id="share-btn" onclick="copyUrl()">🔗 このページのURLをコピーして友達に共有</button>
 
 <script>
-let periodCount = 0;
+const CI = {
+  USD:{n:"US Dollar",f:"🇺🇸",s:"$",d:2},EUR:{n:"Euro",f:"🇪🇺",s:"€",d:2},
+  GBP:{n:"British Pound",f:"🇬🇧",s:"£",d:2},JPY:{n:"Japanese Yen",f:"🇯🇵",s:"¥",d:0},
+  AUD:{n:"Australian Dollar",f:"🇦🇺",s:"A$",d:2},CAD:{n:"Canadian Dollar",f:"🇨🇦",s:"C$",d:2},
+  CHF:{n:"Swiss Franc",f:"🇨🇭",s:"Fr",d:2},CNY:{n:"Chinese Yuan",f:"🇨🇳",s:"¥",d:2},
+  HKD:{n:"Hong Kong Dollar",f:"🇭🇰",s:"HK$",d:2},SGD:{n:"Singapore Dollar",f:"🇸🇬",s:"S$",d:2},
+  KRW:{n:"South Korean Won",f:"🇰🇷",s:"₩",d:0},INR:{n:"Indian Rupee",f:"🇮🇳",s:"₹",d:2},
+  MXN:{n:"Mexican Peso",f:"🇲🇽",s:"$",d:2},BRL:{n:"Brazilian Real",f:"🇧🇷",s:"R$",d:2},
+  ZAR:{n:"South African Rand",f:"🇿🇦",s:"R",d:2},AED:{n:"UAE Dirham",f:"🇦🇪",s:"د.إ",d:2},
+  AFN:{n:"Afghan Afghani",f:"🇦🇫",s:"؋",d:2},ALL:{n:"Albanian Lek",f:"🇦🇱",s:"L",d:2},
+  AMD:{n:"Armenian Dram",f:"🇦🇲",s:"֏",d:2},AOA:{n:"Angolan Kwanza",f:"🇦🇴",s:"Kz",d:2},
+  ARS:{n:"Argentine Peso",f:"🇦🇷",s:"$",d:2},AZN:{n:"Azerbaijani Manat",f:"🇦🇿",s:"₼",d:2},
+  BAM:{n:"Bosnia Mark",f:"🇧🇦",s:"KM",d:2},BBD:{n:"Barbadian Dollar",f:"🇧🇧",s:"$",d:2},
+  BDT:{n:"Bangladeshi Taka",f:"🇧🇩",s:"৳",d:2},BGN:{n:"Bulgarian Lev",f:"🇧🇬",s:"лв",d:2},
+  BHD:{n:"Bahraini Dinar",f:"🇧🇭",s:"BD",d:3},BIF:{n:"Burundian Franc",f:"🇧🇮",s:"Fr",d:0},
+  BND:{n:"Brunei Dollar",f:"🇧🇳",s:"$",d:2},BOB:{n:"Bolivian Boliviano",f:"🇧🇴",s:"Bs.",d:2},
+  BSD:{n:"Bahamian Dollar",f:"🇧🇸",s:"$",d:2},BTN:{n:"Bhutanese Ngultrum",f:"🇧🇹",s:"Nu",d:2},
+  BWP:{n:"Botswana Pula",f:"🇧🇼",s:"P",d:2},BYN:{n:"Belarusian Ruble",f:"🇧🇾",s:"Br",d:2},
+  BZD:{n:"Belize Dollar",f:"🇧🇿",s:"$",d:2},CDF:{n:"Congolese Franc",f:"🇨🇩",s:"Fr",d:2},
+  CLP:{n:"Chilean Peso",f:"🇨🇱",s:"$",d:0},COP:{n:"Colombian Peso",f:"🇨🇴",s:"$",d:2},
+  CRC:{n:"Costa Rican Colón",f:"🇨🇷",s:"₡",d:2},CUP:{n:"Cuban Peso",f:"🇨🇺",s:"$",d:2},
+  CVE:{n:"Cape Verdean Escudo",f:"🇨🇻",s:"$",d:2},CZK:{n:"Czech Koruna",f:"🇨🇿",s:"Kč",d:2},
+  DJF:{n:"Djiboutian Franc",f:"🇩🇯",s:"Fr",d:0},DKK:{n:"Danish Krone",f:"🇩🇰",s:"kr",d:2},
+  DOP:{n:"Dominican Peso",f:"🇩🇴",s:"$",d:2},DZD:{n:"Algerian Dinar",f:"🇩🇿",s:"دج",d:2},
+  EGP:{n:"Egyptian Pound",f:"🇪🇬",s:"£",d:2},ETB:{n:"Ethiopian Birr",f:"🇪🇹",s:"Br",d:2},
+  FJD:{n:"Fijian Dollar",f:"🇫🇯",s:"$",d:2},GEL:{n:"Georgian Lari",f:"🇬🇪",s:"₾",d:2},
+  GHS:{n:"Ghanaian Cedi",f:"🇬🇭",s:"₵",d:2},GMD:{n:"Gambian Dalasi",f:"🇬🇲",s:"D",d:2},
+  GNF:{n:"Guinean Franc",f:"🇬🇳",s:"Fr",d:0},GTQ:{n:"Guatemalan Quetzal",f:"🇬🇹",s:"Q",d:2},
+  GYD:{n:"Guyanese Dollar",f:"🇬🇾",s:"$",d:2},HNL:{n:"Honduran Lempira",f:"🇭🇳",s:"L",d:2},
+  HTG:{n:"Haitian Gourde",f:"🇭🇹",s:"G",d:2},HUF:{n:"Hungarian Forint",f:"🇭🇺",s:"Ft",d:0},
+  IDR:{n:"Indonesian Rupiah",f:"🇮🇩",s:"Rp",d:0},ILS:{n:"Israeli Shekel",f:"🇮🇱",s:"₪",d:2},
+  IQD:{n:"Iraqi Dinar",f:"🇮🇶",s:"ع.د",d:3},IRR:{n:"Iranian Rial",f:"🇮🇷",s:"﷼",d:2},
+  ISK:{n:"Icelandic Króna",f:"🇮🇸",s:"kr",d:0},JMD:{n:"Jamaican Dollar",f:"🇯🇲",s:"$",d:2},
+  JOD:{n:"Jordanian Dinar",f:"🇯🇴",s:"JD",d:3},KES:{n:"Kenyan Shilling",f:"🇰🇪",s:"KSh",d:2},
+  KGS:{n:"Kyrgyzstani Som",f:"🇰🇬",s:"с",d:2},KHR:{n:"Cambodian Riel",f:"🇰🇭",s:"៛",d:2},
+  KMF:{n:"Comorian Franc",f:"🇰🇲",s:"Fr",d:0},KWD:{n:"Kuwaiti Dinar",f:"🇰🇼",s:"KD",d:3},
+  KYD:{n:"Cayman Islands Dollar",f:"🇰🇾",s:"$",d:2},KZT:{n:"Kazakhstani Tenge",f:"🇰🇿",s:"₸",d:2},
+  LAK:{n:"Lao Kip",f:"🇱🇦",s:"₭",d:2},LBP:{n:"Lebanese Pound",f:"🇱🇧",s:"£",d:2},
+  LKR:{n:"Sri Lankan Rupee",f:"🇱🇰",s:"₨",d:2},LRD:{n:"Liberian Dollar",f:"🇱🇷",s:"$",d:2},
+  LYD:{n:"Libyan Dinar",f:"🇱🇾",s:"LD",d:3},MAD:{n:"Moroccan Dirham",f:"🇲🇦",s:"MAD",d:2},
+  MDL:{n:"Moldovan Leu",f:"🇲🇩",s:"L",d:2},MGA:{n:"Malagasy Ariary",f:"🇲🇬",s:"Ar",d:2},
+  MMK:{n:"Burmese Kyat",f:"🇲🇲",s:"K",d:2},MNT:{n:"Mongolian Tögrög",f:"🇲🇳",s:"₮",d:2},
+  MOP:{n:"Macanese Pataca",f:"🇲🇴",s:"P",d:2},MUR:{n:"Mauritian Rupee",f:"🇲🇺",s:"₨",d:2},
+  MVR:{n:"Maldivian Rufiyaa",f:"🇲🇻",s:"Rf",d:2},MWK:{n:"Malawian Kwacha",f:"🇲🇼",s:"MK",d:2},
+  MYR:{n:"Malaysian Ringgit",f:"🇲🇾",s:"RM",d:2},MZN:{n:"Mozambican Metical",f:"🇲🇿",s:"MT",d:2},
+  NAD:{n:"Namibian Dollar",f:"🇳🇦",s:"$",d:2},NGN:{n:"Nigerian Naira",f:"🇳🇬",s:"₦",d:2},
+  NIO:{n:"Nicaraguan Córdoba",f:"🇳🇮",s:"C$",d:2},NOK:{n:"Norwegian Krone",f:"🇳🇴",s:"kr",d:2},
+  NPR:{n:"Nepalese Rupee",f:"🇳🇵",s:"₨",d:2},NZD:{n:"New Zealand Dollar",f:"🇳🇿",s:"$",d:2},
+  OMR:{n:"Omani Rial",f:"🇴🇲",s:"﷼",d:3},PAB:{n:"Panamanian Balboa",f:"🇵🇦",s:"B/.",d:2},
+  PEN:{n:"Peruvian Sol",f:"🇵🇪",s:"S/",d:2},PGK:{n:"Papua New Guinean Kina",f:"🇵🇬",s:"K",d:2},
+  PHP:{n:"Philippine Peso",f:"🇵🇭",s:"₱",d:2},PKR:{n:"Pakistani Rupee",f:"🇵🇰",s:"₨",d:2},
+  PLN:{n:"Polish Złoty",f:"🇵🇱",s:"zł",d:2},PYG:{n:"Paraguayan Guaraní",f:"🇵🇾",s:"₲",d:0},
+  QAR:{n:"Qatari Riyal",f:"🇶🇦",s:"﷼",d:2},RON:{n:"Romanian Leu",f:"🇷🇴",s:"lei",d:2},
+  RSD:{n:"Serbian Dinar",f:"🇷🇸",s:"din",d:2},RUB:{n:"Russian Ruble",f:"🇷🇺",s:"₽",d:2},
+  RWF:{n:"Rwandan Franc",f:"🇷🇼",s:"Fr",d:0},SAR:{n:"Saudi Riyal",f:"🇸🇦",s:"﷼",d:2},
+  SBD:{n:"Solomon Islands Dollar",f:"🇸🇧",s:"$",d:2},SCR:{n:"Seychellois Rupee",f:"🇸🇨",s:"₨",d:2},
+  SDG:{n:"Sudanese Pound",f:"🇸🇩",s:"£",d:2},SEK:{n:"Swedish Krona",f:"🇸🇪",s:"kr",d:2},
+  SHP:{n:"Saint Helena Pound",f:"🇸🇭",s:"£",d:2},SOS:{n:"Somali Shilling",f:"🇸🇴",s:"Sh",d:2},
+  SRD:{n:"Surinamese Dollar",f:"🇸🇷",s:"$",d:2},SSP:{n:"South Sudanese Pound",f:"🇸🇸",s:"£",d:2},
+  STN:{n:"São Tomé Dobra",f:"🇸🇹",s:"Db",d:2},SYP:{n:"Syrian Pound",f:"🇸🇾",s:"£",d:2},
+  SZL:{n:"Swazi Lilangeni",f:"🇸🇿",s:"L",d:2},THB:{n:"Thai Baht",f:"🇹🇭",s:"฿",d:2},
+  TJS:{n:"Tajikistani Somoni",f:"🇹🇯",s:"SM",d:2},TMT:{n:"Turkmenistan Manat",f:"🇹🇲",s:"T",d:2},
+  TND:{n:"Tunisian Dinar",f:"🇹🇳",s:"DT",d:3},TOP:{n:"Tongan Paʻanga",f:"🇹🇴",s:"T$",d:2},
+  TRY:{n:"Turkish Lira",f:"🇹🇷",s:"₺",d:2},TTD:{n:"Trinidad Dollar",f:"🇹🇹",s:"$",d:2},
+  TZS:{n:"Tanzanian Shilling",f:"🇹🇿",s:"Sh",d:2},UAH:{n:"Ukrainian Hryvnia",f:"🇺🇦",s:"₴",d:2},
+  UGX:{n:"Ugandan Shilling",f:"🇺🇬",s:"Sh",d:0},UYU:{n:"Uruguayan Peso",f:"🇺🇾",s:"$",d:2},
+  UZS:{n:"Uzbekistani Som",f:"🇺🇿",s:"лв",d:2},VES:{n:"Venezuelan Bolívar",f:"🇻🇪",s:"Bs.",d:2},
+  VND:{n:"Vietnamese Đồng",f:"🇻🇳",s:"₫",d:0},VUV:{n:"Vanuatu Vatu",f:"🇻🇺",s:"Vt",d:0},
+  WST:{n:"Samoan Tālā",f:"🇼🇸",s:"T",d:2},XAF:{n:"Central African CFA Franc",f:"🌍",s:"Fr",d:0},
+  XCD:{n:"East Caribbean Dollar",f:"🌎",s:"$",d:2},XOF:{n:"West African CFA Franc",f:"🌍",s:"Fr",d:0},
+  XPF:{n:"CFP Franc",f:"🌏",s:"Fr",d:0},YER:{n:"Yemeni Rial",f:"🇾🇪",s:"﷼",d:2},
+  ZMW:{n:"Zambian Kwacha",f:"🇿🇲",s:"ZK",d:2},ZWL:{n:"Zimbabwean Dollar",f:"🇿🇼",s:"$",d:2},
+};
+const JA = {
+  USD:'アメリカ',EUR:'ユーロ圏 ヨーロッパ',GBP:'イギリス',JPY:'日本',
+  AUD:'オーストラリア',CAD:'カナダ',CHF:'スイス',CNY:'中国',
+  HKD:'香港',SGD:'シンガポール',KRW:'韓国',INR:'インド',
+  MXN:'メキシコ',BRL:'ブラジル',ZAR:'南アフリカ',AED:'アラブ首長国連邦 ドバイ',
+  THB:'タイ',MYR:'マレーシア',IDR:'インドネシア',PHP:'フィリピン',
+  VND:'ベトナム',TRY:'トルコ',RUB:'ロシア',NOK:'ノルウェー',
+  SEK:'スウェーデン',DKK:'デンマーク',NZD:'ニュージーランド',PLN:'ポーランド',
+  HUF:'ハンガリー',CZK:'チェコ',RON:'ルーマニア',SAR:'サウジアラビア',
+  QAR:'カタール',KWD:'クウェート',BHD:'バーレーン',OMR:'オマーン',
+  JOD:'ヨルダン',ILS:'イスラエル',EGP:'エジプト',MAD:'モロッコ',
+  NGN:'ナイジェリア',KES:'ケニア',GHS:'ガーナ',PKR:'パキスタン',
+  BDT:'バングラデシュ',LKR:'スリランカ',NPR:'ネパール',MMK:'ミャンマー',
+  KHR:'カンボジア',LAK:'ラオス',MNT:'モンゴル',ARS:'アルゼンチン',
+  COP:'コロンビア',PEN:'ペルー',CLP:'チリ',CRC:'コスタリカ',
+  GTQ:'グアテマラ',FJD:'フィジー',GEL:'ジョージア',UAH:'ウクライナ',
+  BGN:'ブルガリア',RSD:'セルビア',ISK:'アイスランド',ALL:'アルバニア',
+  MDL:'モルドバ',BYN:'ベラルーシ',AMD:'アルメニア',AZN:'アゼルバイジャン',
+  KZT:'カザフスタン',UZS:'ウズベキスタン',TJS:'タジキスタン',KGS:'キルギス',
+  TMT:'トルクメニスタン',BOB:'ボリビア',UYU:'ウルグアイ',PYG:'パラグアイ',
+  ZMW:'ザンビア',ETB:'エチオピア',TZS:'タンザニア',UGX:'ウガンダ',
+  RWF:'ルワンダ',DZD:'アルジェリア',LYD:'リビア',SDG:'スーダン',
+  MGA:'マダガスカル',MWK:'マラウイ',GMD:'ガンビア',SOS:'ソマリア',
+  MOP:'マカオ',BTN:'ブータン',MVR:'モルディブ',
+};
+const codes = Object.keys(CI);
 
-function addPeriod(startDate = '', endDate = '', people = 1) {
-  periodCount++;
-  const id = periodCount;
-  const list = document.getElementById('periodList');
-  const div = document.createElement('div');
-  div.className = 'period-item';
-  div.id = 'period-' + id;
-  div.innerHTML = `
-    <div class="period-label">期間 ${list.children.length + 1}</div>
-    <button class="remove-btn" onclick="removePeriod(${id})">✕</button>
-    <div class="row row-2">
-      <div>
-        <label>開始日</label>
-        <input type="date" id="start-${id}" value="${startDate}">
-      </div>
-      <div>
-        <label>終了日</label>
-        <input type="date" id="end-${id}" value="${endDate}">
-      </div>
-    </div>
-    <label>この期間の人数</label>
-    <div class="people-selector">
-      <button class="people-btn ${people===1?'active':''}" onclick="setPeople(${id},1,this)">🧳 1人</button>
-      <button class="people-btn ${people===2?'active':''}" onclick="setPeople(${id},2,this)">🤝 2人</button>
-    </div>
-    <input type="hidden" id="people-${id}" value="${people}">
-  `;
-  list.appendChild(div);
-  renumberPeriods();
+const DEFAULT_EMOJIS = ['🐱','🐶','🐼','🦊','🐨','🐰'];
+const EMOJIS = ['🐱','🐶','🐼','🦊','🐨','🐰','🐹','🐻','🦦','🐿️','🦔','🦉','🦁','🐯','🐧','🦩','🌟','🌻','🐝','🐳','🦭','🦄','🌸','🌼','🌺','🌷','🌹','🪷','🪻','🐬'];
+
+// ── State ─────────────────────────────────────────────────────────────────────
+function makeBase() {
+  return { numPeople:2, names:Array(6).fill(''), emojis:[...DEFAULT_EMOJIS] };
+}
+function makeCand() {
+  return { name:'', currency:'USD', jpyRate:155, total:'', checkins:Array(6).fill(''), checkouts:Array(6).fill(''), stayUrl:'', stayAddr:'', memo:'' };
 }
 
-function removePeriod(id) {
-  const el = document.getElementById('period-' + id);
-  if (el) el.remove();
-  renumberPeriods();
+let base = makeBase();
+let candidates = [makeCand()];
+let curTab = 'base'; // 'base' | 0..4 | 'summary'
+let _currency = 'USD';
+
+// ── Tabs ──────────────────────────────────────────────────────────────────────
+function renderTabs() {
+  const bar = document.getElementById('tab-bar');
+  let h = `<button class="tab-btn base-btn${curTab==='base'?' active':''}" onclick="switchTab('base')">👥 基本情報</button>`;
+  candidates.forEach((c, i) => { const label=c.name?c.name.slice(0,10):`候補${i+1}`; h += `<button class="tab-btn${curTab===i?' active':''}" onclick="switchTab(${i})">${label}</button>`; });
+  if (candidates.length < 5) h += `<button class="tab-btn add-btn" onclick="addCand()">＋</button>`;
+  if (candidates.length > 1) h += `<button class="tab-btn del-btn" onclick="delCand()">✕</button>`;
+  h += `<button class="tab-btn summary-btn${curTab==='summary'?' active':''}" onclick="switchTab('summary')">📋 サマリー</button>`;
+  bar.innerHTML = h;
 }
 
-function renumberPeriods() {
-  const items = document.querySelectorAll('.period-item .period-label');
-  items.forEach((el, i) => el.textContent = `期間 ${i + 1}`);
-}
-
-function setPeople(id, n, btn) {
-  document.getElementById('people-' + id).value = n;
-  btn.closest('.people-selector').querySelectorAll('.people-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-}
-
-function showError(msg) {
-  const el = document.getElementById('errorMsg');
-  el.textContent = msg;
-  el.classList.add('show');
-}
-function clearError() {
-  document.getElementById('errorMsg').classList.remove('show');
-}
-
-function daysBetween(a, b) {
-  return Math.round((new Date(b) - new Date(a)) / 86400000);
-}
-
-function fmt(n) {
-  return '¥' + Math.round(n).toLocaleString('ja-JP');
-}
-
-function calculate() {
-  clearError();
-  const totalCost = parseFloat(document.getElementById('totalCost').value);
-  const checkIn = document.getElementById('checkIn').value;
-  const checkOut = document.getElementById('checkOut').value;
-  const n1 = document.getElementById('name1').value || 'Aさん';
-  const n2 = document.getElementById('name2').value || 'Bさん';
-
-  if (!totalCost || totalCost <= 0) return showError('合計費用を入力してください');
-  if (!checkIn || !checkOut) return showError('チェックイン・アウト日を入力してください');
-  if (checkIn >= checkOut) return showError('チェックアウトはチェックインより後の日にしてください');
-
-  const totalNights = daysBetween(checkIn, checkOut);
-  const perNight = totalCost / totalNights;
-
-  const items = document.querySelectorAll('.period-item');
-  if (items.length === 0) return showError('期間を1つ以上追加してください');
-
-  let periods = [];
-  for (const item of items) {
-    const id = item.id.replace('period-', '');
-    const start = document.getElementById('start-' + id).value;
-    const end = document.getElementById('end-' + id).value;
-    const people = parseInt(document.getElementById('people-' + id).value);
-    if (!start || !end) return showError('すべての期間に開始日・終了日を入力してください');
-    if (start >= end) return showError('期間の終了日は開始日より後にしてください');
-    if (start < checkIn || end > checkOut) return showError('期間はチェックイン〜アウトの範囲内にしてください');
-    periods.push({ start, end, people, nights: daysBetween(start, end) });
-  }
-
-  const coveredNights = periods.reduce((s, p) => s + p.nights, 0);
-  if (coveredNights !== totalNights) {
-    return showError(`期間の合計（${coveredNights}泊）が全体（${totalNights}泊）と一致しません`);
-  }
-
-  let pay1 = 0, pay2 = 0;
-  const rows = [];
-
-  for (const p of periods) {
-    const cost = perNight * p.nights;
-    let each1, each2;
-    if (p.people === 1) {
-      each1 = cost; each2 = 0;
-    } else {
-      each1 = cost / 2; each2 = cost / 2;
+// ── Content ───────────────────────────────────────────────────────────────────
+function renderContent() {
+  const area = document.getElementById('content-area');
+  if (curTab === 'base') {
+    area.innerHTML = `
+      <div class="card">
+        <div class="section-label">👥 何人で泊まる？</div>
+        <div class="people-selector" id="people-sel"></div>
+        <div class="divider"></div>
+        <div class="section-label">名前</div>
+        <div class="names-grid" id="names-grid"></div>
+      </div>`;
+    let pills = '';
+    for (let n=1;n<=6;n++) pills+=`<button class="count-pill${base.numPeople===n?' active':''}" onclick="setPeople(${n})">${n}人</button>`;
+    document.getElementById('people-sel').innerHTML = pills;
+    buildNamesGrid();
+    for (let i=0;i<base.numPeople;i++) {
+      const ne=document.getElementById(`name${i}`); if(ne) ne.value=base.names[i];
     }
-    pay1 += each1;
-    pay2 += each2;
-    rows.push({ ...p, cost, each1, each2 });
-  }
-
-  const perNight1 = pay1 / totalNights;
-  const perNight2 = pay2 / totalNights;
-  const perMonth1 = perNight1 * 30.4375;
-  const perMonth2 = perNight2 * 30.4375;
-
-  document.getElementById('resultTotal').textContent = fmt(totalCost);
-  document.getElementById('resultNights').textContent =
-    `${(document.getElementById('placeName').value || '宿泊費')} ・ ${totalNights}泊`;
-
-  let personHTML = '';
-  personHTML += `<div class="person-row">
-    <div class="person-name">🧳 ${n1}</div>
-    <div class="person-amount">
-      <div class="amount">${fmt(pay1)}</div>
-      <div class="per-night">1泊あたり ${fmt(perNight1)} ／ 月換算 ${fmt(perMonth1)}</div>
-    </div>
-  </div>`;
-  if (pay2 > 0) {
-    personHTML += `<div class="person-row">
-      <div class="person-name">🤝 ${n2}</div>
-      <div class="person-amount">
-        <div class="amount">${fmt(pay2)}</div>
-        <div class="per-night">1泊あたり ${fmt(perNight2)} ／ 月換算 ${fmt(perMonth2)}</div>
-      </div>
-    </div>`;
-  }
-  document.getElementById('personResults').innerHTML = personHTML;
-
-  document.getElementById('statsGrid').innerHTML = `
-    <div class="stat-box">
-      <div class="stat-label">全体の1泊単価</div>
-      <div class="stat-value">${fmt(perNight)}</div>
-    </div>
-    <div class="stat-box">
-      <div class="stat-label">滞在期間</div>
-      <div class="stat-value">${totalNights}泊</div>
-    </div>
-  `;
-
-  const tbody = document.getElementById('breakdownBody');
-  tbody.innerHTML = '';
-  rows.forEach(r => {
-    const startFmt = r.start.replace(/^(\d{4})-(\d{2})-(\d{2})$/, '$2/$3');
-    const endFmt = r.end.replace(/^(\d{4})-(\d{2})-(\d{2})$/, '$2/$3');
-    const eachStr = r.people === 1
-      ? `${n1}: ${fmt(r.each1)}`
-      : `各 ${fmt(r.each1)}`;
-    const tr = document.createElement('tr');
-    tr.innerHTML = `<td>${startFmt}〜${endFmt}</td><td>${r.people}人</td><td>${r.nights}泊</td><td>${eachStr}</td>`;
-    tbody.appendChild(tr);
-  });
-
-  const resultCard = document.getElementById('resultCard');
-  resultCard.classList.add('show');
-  resultCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  document.getElementById('breakdownTable').classList.remove('show');
-}
-
-function toggleBreakdown() {
-  const table = document.getElementById('breakdownTable');
-  const btn = document.querySelector('.breakdown-toggle');
-  if (table.classList.contains('show')) {
-    table.classList.remove('show');
-    btn.textContent = '明細を見る ▾';
+    applyEmojis();
+  } else if (curTab === 'summary') {
+    area.innerHTML = buildSummaryHTML();
   } else {
-    table.classList.add('show');
-    btn.textContent = '明細を閉じる ▴';
+    const c = candidates[curTab];
+    _currency = c.currency;
+    const ci = CI[c.currency]||{f:'🌐',s:c.currency};
+    area.innerHTML = `
+      <div class="card">
+        <input type="text" class="cand-name-input" id="cand-name" placeholder="📝 候補の名前（例：Central Park近く）" oninput="saveCandName()">
+      </div>
+      <div class="card">
+        <div class="section-label">📅 日程</div>
+        <div id="dates-container"></div>
+      </div>
+      <div class="card">
+        <div class="section-label">💱 通貨・金額</div>
+        <div class="cur-amount-row">
+          <div class="cur-trigger" id="cur-trigger" onclick="toggleCurrencySearch()">
+            <span id="selected-pill">${ci.f} ${c.currency}</span><span class="caret">▾</span>
+          </div>
+          <div class="amount-wrap" style="flex:1">
+            <span class="amount-sym" id="sym">${ci.s||c.currency}</span>
+            <input type="number" id="total" min="0" step="1" oninput="saveAndCalc()" placeholder="金額を入力">
+          </div>
+        </div>
+        <div class="currency-search-panel" id="currency-search-panel">
+          <div class="currency-search-wrap">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="currency-search" placeholder="アメリカ、USD、yen…" autocomplete="off" oninput="filterCurrencies()" onfocus="openDropdown()">
+            <div class="currency-dropdown" id="currency-dropdown"></div>
+          </div>
+        </div>
+        <div class="jpy-rate-row${c.currency!=='JPY'?' visible':''}" id="jpy-rate-row">
+          <span class="jpy-rate-label" id="jpy-rate-label">1 ${c.currency} = ¥</span>
+          <input type="number" id="jpy-rate" min="0" step="0.01" oninput="saveAndCalc()" placeholder="レート">
+        </div>
+      </div>
+      <div class="card">
+        <div class="section-label">💸 それぞれの支払い</div>
+        <div id="results-grid" class="results-grid"></div>
+        <div class="method-note" id="method-note"></div>
+      </div>
+      <div class="card">
+        <div class="sub-label">🏡 ステイ先の情報</div>
+        <input type="url" class="stay-field" id="stay-url" placeholder="例: https://airbnb.com/..." oninput="updateStayLinks();saveAndCalc()">
+        <a class="stay-link-btn" id="stay-link" href="#" target="_blank" rel="noopener">🏡 ステイを見る</a>
+        <div class="sub-label">📍 ステイ先の住所</div>
+        <input type="url" class="stay-field" id="stay-addr" placeholder="例: https://maps.google.com/..." oninput="updateStayLinks();saveAndCalc()">
+        <a class="stay-link-btn" id="map-link" href="#" target="_blank" rel="noopener">📍 地図を見る</a>
+        <div class="sub-label">📝 メモ</div>
+        <textarea class="stay-field" id="memo" rows="3" placeholder="例：眺め最高！キッチンあり、洗濯機つき 🧺" oninput="saveAndCalc()"></textarea>
+      </div>`;
+    const nn=document.getElementById('cand-name'); if(nn) nn.value=c.name||'';
+    buildDatesContainer();
+    for (let i=0;i<base.numPeople;i++) {
+      const ci=document.getElementById(`checkin-${i}`); if(ci) ci.value=c.checkins[i];
+      const co=document.getElementById(`checkout-${i}`); if(co) co.value=c.checkouts[i];
+    }
+    updateNightsBadges();
+    applyCurrency(c.currency, false);
+    const te=document.getElementById('total'); if(te) te.value=c.total;
+    const re=document.getElementById('jpy-rate'); if(re) re.value=c.jpyRate;
+    const sue=document.getElementById('stay-url'); if(sue) sue.value=c.stayUrl;
+    const sae=document.getElementById('stay-addr'); if(sae) sae.value=c.stayAddr;
+    const me=document.getElementById('memo'); if(me) me.value=c.memo;
+    updateStayLinks();
+    calc();
   }
 }
 
-// 初期の期間を1つ追加
-addPeriod();
+// ── Tab switching ─────────────────────────────────────────────────────────────
+function switchTab(to) {
+  saveCurrentState();
+  curTab = to;
+  renderTabs();
+  renderContent();
+}
+function addCand() {
+  saveCurrentState();
+  candidates.push(makeCand());
+  curTab = candidates.length - 1;
+  renderTabs(); renderContent();
+}
+function delCand() {
+  if (candidates.length <= 1) return;
+  saveCurrentState();
+  candidates.splice(typeof curTab==='number'?curTab:candidates.length-1, 1);
+  curTab = Math.max(0, (typeof curTab==='number'?curTab:0) - 1);
+  renderTabs(); renderContent();
+}
+
+function saveCurrentState() {
+  if (curTab === 'base') {
+    for (let i=0;i<base.numPeople;i++) {
+      base.names[i] = document.getElementById(`name${i}`)?.value || '';
+    }
+  } else if (typeof curTab === 'number') {
+    const c = candidates[curTab];
+    c.name = document.getElementById('cand-name')?.value || '';
+    for (let i=0;i<base.numPeople;i++) {
+      c.checkins[i] = document.getElementById(`checkin-${i}`)?.value  || '';
+      c.checkouts[i]= document.getElementById(`checkout-${i}`)?.value || '';
+    }
+    c.currency = _currency;
+    c.jpyRate  = parseFloat(document.getElementById('jpy-rate')?.value) || 155;
+    c.total    = document.getElementById('total')?.value    || '';
+    c.stayUrl  = document.getElementById('stay-url')?.value || '';
+    c.stayAddr = document.getElementById('stay-addr')?.value|| '';
+    c.memo     = document.getElementById('memo')?.value     || '';
+  }
+}
+
+// ── Names & Dates builders ────────────────────────────────────────────────────
+function buildNamesGrid() {
+  const grid = document.getElementById('names-grid'); if(!grid) return;
+  grid.style.gridTemplateColumns = base.numPeople === 1 ? '1fr' : '1fr 1fr';
+  grid.innerHTML = '';
+  for (let i=0;i<base.numPeople;i++) {
+    const wrap = document.createElement('div'); wrap.className='name-input-wrap';
+    wrap.innerHTML = `<button class="emoji-btn" id="emoji-btn-${i}" onclick="openEmojiPicker(${i})">${base.emojis[i]}</button>
+      <input type="text" id="name${i}" placeholder="名前を入力" oninput="saveAndCalc()">
+      <div class="emoji-picker" id="emoji-picker-${i}"></div>`;
+    grid.appendChild(wrap);
+  }
+}
+
+function buildDatesContainer() {
+  const cont = document.getElementById('dates-container'); if(!cont) return;
+  cont.innerHTML = '';
+  for (let i=0;i<base.numPeople;i++) {
+    if (i>0) { const d=document.createElement('div'); d.className='divider'; d.style.margin='14px 0'; cont.appendChild(d); }
+    const row = document.createElement('div');
+    row.innerHTML = `<div class="person-row-header">
+        <span class="person-tag" id="person-tag-${i}">${base.emojis[i]} ${base.names[i]||`メンバー${i+1}`}</span>
+        <span class="person-nights-badge" id="nights-${i}">—</span>
+      </div>
+      <div class="dates-row">
+        <div class="input-group"><label>🔑 チェックイン</label><input type="date" id="checkin-${i}" onchange="saveAndCalc()"></div>
+        <div class="input-group"><label>🔐 チェックアウト</label><input type="date" id="checkout-${i}" onchange="saveAndCalc()"></div>
+      </div>`;
+    cont.appendChild(row);
+  }
+}
+
+function getCand() { return typeof curTab==='number' ? candidates[curTab] : null; }
+
+function applyEmojis() {
+  for (let i=0;i<base.numPeople;i++) {
+    const btn=document.getElementById(`emoji-btn-${i}`); if(btn) btn.textContent=base.emojis[i];
+  }
+}
+
+function updateNightsBadges() {
+  const c = getCand();
+  for (let i=0;i<base.numPeople;i++) {
+    const tag=document.getElementById(`person-tag-${i}`);
+    if (tag) tag.textContent=`${base.emojis[i]} ${base.names[i]?.trim()||`メンバー${i+1}`}`;
+    const badge=document.getElementById(`nights-${i}`);
+    if (badge && c) {
+      if (c.checkins[i]&&c.checkouts[i]&&c.checkins[i]<c.checkouts[i])
+        badge.textContent=nightsBetween(c.checkins[i],c.checkouts[i])+'泊';
+      else badge.textContent='—';
+    }
+  }
+}
+
+// ── People count ──────────────────────────────────────────────────────────────
+function setPeople(n) {
+  saveCurrentState();
+  base.numPeople = n;
+  document.querySelectorAll('.count-pill').forEach((el,i)=>el.classList.toggle('active',i+1===n));
+  buildNamesGrid(); applyEmojis();
+  for (let i=0;i<n;i++) {
+    const ne=document.getElementById(`name${i}`); if(ne) ne.value=base.names[i];
+  }
+  saveUrl();
+}
+
+// ── Emoji picker ──────────────────────────────────────────────────────────────
+function openEmojiPicker(idx) {
+  document.querySelectorAll('.emoji-picker').forEach(p=>p.classList.remove('open'));
+  const picker=document.getElementById('emoji-picker-'+idx); if(!picker) return;
+  picker.innerHTML=EMOJIS.map(e=>`<button onclick="setEmoji(${idx},'${e}')">${e}</button>`).join('');
+  picker.classList.add('open');
+}
+function saveCandName() {
+  if (typeof curTab==='number') {
+    candidates[curTab].name = document.getElementById('cand-name')?.value || '';
+    renderTabs(); saveUrl();
+  }
+}
+
+function setEmoji(idx, e) {
+  base.emojis[idx]=e;
+  const btn=document.getElementById('emoji-btn-'+idx); if(btn) btn.textContent=e;
+  document.getElementById('emoji-picker-'+idx)?.classList.remove('open');
+  updateNightsBadges(); saveUrl();
+}
+
+document.addEventListener('click', e => {
+  if (!e.target.closest('.name-input-wrap'))
+    document.querySelectorAll('.emoji-picker').forEach(p=>p.classList.remove('open'));
+  if (!e.target.closest('#cur-trigger') && !e.target.closest('#currency-search-panel'))
+    document.getElementById('currency-dropdown')?.classList.remove('open'),
+    document.getElementById('currency-search-panel')?.classList.remove('open');
+});
+
+// ── Currency ──────────────────────────────────────────────────────────────────
+function buildDropdown(filter) {
+  const f=(filter||'').toLowerCase();
+  const dd=document.getElementById('currency-dropdown'); if(!dd) return;
+  const matches=codes.filter(c=>c.toLowerCase().includes(f)||(CI[c]?.n||'').toLowerCase().includes(f)||(JA[c]||'').includes(f));
+  dd.innerHTML=matches.slice(0,80).map(c=>{
+    const i=CI[c]||{n:c,f:'🌐'};
+    return `<div class="currency-option${c===_currency?' sel':''}" onclick="selectCurrency('${c}')">
+      <span>${i.f||'🌐'}</span><span class="code">${c}</span><span class="cname">${i.n||''}</span></div>`;
+  }).join('')||'<div class="currency-option" style="color:var(--mid)">見つかりません</div>';
+}
+function openDropdown() { buildDropdown(document.getElementById('currency-search')?.value); document.getElementById('currency-dropdown')?.classList.add('open'); }
+function filterCurrencies() { buildDropdown(document.getElementById('currency-search')?.value); document.getElementById('currency-dropdown')?.classList.add('open'); }
+function toggleCurrencySearch() {
+  const panel=document.getElementById('currency-search-panel'); if(!panel) return;
+  const isOpen=panel.classList.toggle('open');
+  if (isOpen) { document.getElementById('currency-search')?.focus(); buildDropdown(); document.getElementById('currency-dropdown')?.classList.add('open'); }
+}
+function selectCurrency(c) {
+  applyCurrency(c, true);
+  document.getElementById('currency-search').value='';
+  document.getElementById('currency-dropdown').classList.remove('open');
+  document.getElementById('currency-search-panel').classList.remove('open');
+}
+function applyCurrency(c, doCalc) {
+  _currency=c;
+  const i=CI[c]||{f:'🌐',s:c,d:2};
+  const pill=document.getElementById('selected-pill'); if(pill) pill.textContent=`${i.f||''} ${c}`;
+  const sym=document.getElementById('sym'); if(sym) sym.textContent=i.s||c;
+  const te=document.getElementById('total');
+  if(te) te.style.paddingLeft=(i.s||c).length>2?'52px':'42px';
+  const rr=document.getElementById('jpy-rate-row'); if(rr) rr.classList.toggle('visible',c!=='JPY');
+  const rl=document.getElementById('jpy-rate-label'); if(rl) rl.textContent=`1 ${c} = ¥`;
+  if(doCalc) saveAndCalc();
+}
+
+// ── Stay links ────────────────────────────────────────────────────────────────
+function updateStayLinks() {
+  const su=document.getElementById('stay-url')?.value?.trim();
+  const sl=document.getElementById('stay-link');
+  if(sl){sl.href=su||'#';sl.classList.toggle('show',!!(su&&su.startsWith('http')));}
+  const sa=document.getElementById('stay-addr')?.value?.trim();
+  const ml=document.getElementById('map-link');
+  if(ml){ml.href=sa||'#';ml.classList.toggle('show',!!(sa&&sa.startsWith('http')));}
+}
+
+// ── Calc ──────────────────────────────────────────────────────────────────────
+function nightsBetween(a,b){return Math.round((new Date(b)-new Date(a))/86400000);}
+
+function fmt(amount,cur){
+  const c=cur||_currency; const i=CI[c]||{s:c,d:2};
+  const str=i.d===0?Math.round(amount).toLocaleString():amount.toFixed(i.d).replace(/\B(?=(\d{3})+(?!\d))/g,',');
+  return i.s+str;
+}
+
+function calcCosts(cand) {
+  const total=parseFloat(cand.total)||0; if(total<=0) return null;
+  const people=[];
+  for (let i=0;i<base.numPeople;i++) {
+    if(!cand.checkins[i]||!cand.checkouts[i]||cand.checkins[i]>=cand.checkouts[i]) return null;
+    people.push({name:base.names[i]?.trim()||`メンバー${i+1}`,emoji:base.emojis[i],checkin:cand.checkins[i],checkout:cand.checkouts[i]});
+  }
+  const allDates=[...new Set(people.flatMap(p=>[p.checkin,p.checkout]))].sort();
+  if(allDates.length<2) return null;
+  const rentalNights=nightsBetween(allDates[0],allDates[allDates.length-1]);
+  if(rentalNights<=0) return null;
+  const nightlyRate=total/rentalNights;
+  const costs=new Array(base.numPeople).fill(0);
+  for(let s=0;s<allDates.length-1;s++){
+    const segStart=allDates[s],segEnd=allDates[s+1];
+    const segN=nightsBetween(segStart,segEnd); if(segN<=0) continue;
+    const present=people.reduce((acc,p,i)=>{if(p.checkin<=segStart&&p.checkout>=segEnd)acc.push(i);return acc;},[]);
+    const group=present.length>0?present:[...Array(base.numPeople).keys()];
+    const share=nightlyRate*segN/group.length;
+    group.forEach(i=>costs[i]+=share);
+  }
+  const jpyRate=cand.currency==='JPY'?1:(parseFloat(cand.jpyRate)||0);
+  return {people,costs,total,rentalNights,nightlyRate,jpyRate};
+}
+
+function saveAndCalc() {
+  saveCurrentState();
+  if (typeof curTab==='number') { updateNightsBadges(); calc(); }
+  saveUrl();
+}
+
+function calc() {
+  if (typeof curTab!=='number') return;
+  const c=candidates[curTab];
+  const grid=document.getElementById('results-grid');
+  const note=document.getElementById('method-note');
+  if(!grid) return;
+  const result=calcCosts(c);
+  if(!result){grid.innerHTML='<div class="results-placeholder">基本情報の日程と金額を入力すると計算します</div>';if(note)note.textContent='';return;}
+  const{people,costs,total,rentalNights,nightlyRate,jpyRate}=result;
+  grid.className='results-grid'+(base.numPeople===1?' cols-1':base.numPeople===3||base.numPeople>=5?' cols-3':'');
+  const isJPY = c.currency==='JPY';
+  const mc = isJPY?'var(--red)':'var(--teal)';
+  grid.innerHTML=people.map((p,i)=>{
+    const cost=Math.round(costs[i]*100)/100;
+    const nights=nightsBetween(p.checkin,p.checkout);
+    const perNight=nights>0?cost/nights:0;
+    const perMonth=perNight*30;
+    const jpyLine=(!isJPY&&jpyRate>0)?`<div class="person-jpy" style="color:var(--red)">≒ ¥${Math.round(cost*jpyRate).toLocaleString()}</div>`:'';
+    return `<div class="person-box">
+      <div class="person-label">${p.emoji} ${p.name}</div>
+      <div class="person-amount" style="color:${mc}">${fmt(cost,c.currency)}</div>
+      ${jpyLine}
+      <div class="person-meta">${nights}泊<br>🌙 1泊あたり<br><span style="color:${mc};font-weight:600">${fmt(perNight,c.currency)}</span>${(!isJPY&&jpyRate>0)?` <span style="color:var(--red)">≒ ¥${Math.round(perNight*jpyRate).toLocaleString()}</span>`:''}<br><span style="opacity:0.65">📅 1ヶ月あたり（参考）<br><span style="color:${mc};font-weight:600">${fmt(perMonth,c.currency)}</span>${(!isJPY&&jpyRate>0)?` <span style="color:var(--red)">≒ ¥${Math.round(perMonth*jpyRate).toLocaleString()}</span>`:''}</span></div>
+    </div>`;
+  }).join('');
+  if(note) note.textContent=`合計 ${rentalNights}泊 ／ 1泊 ${fmt(nightlyRate,c.currency)} ／ 泊数・人数ベースで計算`;
+}
+
+// ── Summary ───────────────────────────────────────────────────────────────────
+function buildSummaryHTML() {
+  const hasAny=candidates.some(c=>c.total&&calcCosts(c));
+  if(!hasAny) return `<div class="summary-card"><div class="summary-empty">候補の金額を入力すると、ここに一覧が表示されます</div></div>`;
+  let html='';
+  candidates.forEach((c,idx)=>{
+    const result=calcCosts(c);
+    if(!result){html+=`<div class="summary-card"><div class="summary-title">候補${idx+1}<span class="summary-total">未入力</span></div></div>`;return;}
+    const{people,costs,total,rentalNights,nightlyRate,jpyRate}=result;
+    const ci=CI[c.currency]||{s:c.currency,d:2};
+    const fmtC=v=>{const str=ci.d===0?Math.round(v).toLocaleString():v.toFixed(ci.d).replace(/\B(?=(\d{3})+(?!\d))/g,',');return ci.s+str;};
+    const firstIn=people.map(p=>p.checkin).sort()[0];
+    const lastOut=people.map(p=>p.checkout).sort().reverse()[0];
+    const titleLeft = c.name
+      ? `<div><div class="cand-num-badge">候補${idx+1}</div><div>${c.name}</div></div>`
+      : `<div>候補${idx+1}</div>`;
+    html+=`<div class="summary-card"><div class="summary-title">${titleLeft}<span class="summary-total">${fmtC(total)}</span></div>`;
+    if(firstIn&&lastOut) html+=`<div class="summary-row"><span class="summary-key">📅 期間</span><span class="summary-val">${firstIn} 〜 ${lastOut}（${rentalNights}泊）</span></div>`;
+    if(c.stayUrl) html+=`<div class="summary-row"><span class="summary-key">🏡 ステイ</span><span class="summary-val"><a class="summary-link" href="${c.stayUrl}" target="_blank" rel="noopener">リンクを開く</a></span></div>`;
+    if(c.stayAddr) html+=`<div class="summary-row"><span class="summary-key">📍 住所</span><span class="summary-val"><a class="summary-link" href="${c.stayAddr}" target="_blank" rel="noopener">地図を開く</a></span></div>`;
+    html+=`<div style="margin-top:10px">`;
+    people.forEach((p,i)=>{
+      const cost=Math.round(costs[i]*100)/100;
+      const nights=nightsBetween(p.checkin,p.checkout);
+      const perNight=nights>0?cost/nights:0;
+      const perMonth=perNight*30;
+      const pct=(cost/total*100).toFixed(1);
+      const sIsJPY = c.currency==='JPY';
+      const smc = sIsJPY?'var(--red)':'var(--teal)';
+      const jpyStr=(!sIsJPY&&jpyRate>0)?`<span style="color:var(--red)">≒ ¥${Math.round(cost*jpyRate).toLocaleString()}</span>`:'';
+      const jpyNight=(!sIsJPY&&jpyRate>0)?` <span style="color:var(--red)">≒ ¥${Math.round(perNight*jpyRate).toLocaleString()}</span>`:'';
+      const jpyMonth=(!sIsJPY&&jpyRate>0)?` <span style="color:var(--red);opacity:0.8">≒ ¥${Math.round(perMonth*jpyRate).toLocaleString()}</span>`:'';
+      html+=`<div class="summary-person">
+        <div>
+          <div class="summary-person-name">${p.emoji} ${p.name}</div>
+          <div class="summary-person-sub">${nights}泊</div>
+          <div class="summary-person-sub">🌙 1泊あたり <span style="color:${smc};font-weight:600">${fmtC(perNight)}</span>${jpyNight}</div>
+          <div class="summary-person-sub" style="opacity:0.7">📅 1ヶ月あたり（参考） <span style="color:${smc};font-weight:600">${fmtC(perMonth)}</span>${jpyMonth}</div>
+        </div>
+        <div style="text-align:right"><div class="summary-person-cost" style="color:${smc}">${fmtC(cost)}</div><div class="summary-person-jpy">${jpyStr}</div></div>
+      </div>`;
+    });
+    html+=`</div>`;
+    if(c.memo) html+=`<div class="summary-row" style="margin-top:8px"><span class="summary-key">📝 メモ</span><span class="summary-val">${c.memo}</span></div>`;
+    html+=`</div>`;
+  });
+  return html;
+}
+
+// ── URL sharing ───────────────────────────────────────────────────────────────
+function buildUrl() {
+  const p=new URLSearchParams({ct:typeof curTab==='number'?curTab:curTab});
+  p.set('b_n',base.numPeople);
+  for(let i=0;i<base.numPeople;i++){
+    if(base.names[i])    p.set(`b_nm${i}`,base.names[i]);
+    if(base.emojis[i]!==DEFAULT_EMOJIS[i]) p.set(`b_em${i}`,base.emojis[i]);
+  }
+  p.set('nc',candidates.length);
+  candidates.forEach((c,idx)=>{
+    const pfx=`c${idx}_`;
+    if(c.name)     p.set(pfx+'name',c.name);
+    p.set(pfx+'cur',c.currency);
+    if(c.total)    p.set(pfx+'t',c.total);
+    if(c.jpyRate)  p.set(pfx+'r',c.jpyRate);
+    if(c.stayAddr) p.set(pfx+'sa',c.stayAddr);
+    if(c.memo)     p.set(pfx+'m',c.memo);
+    for(let i=0;i<base.numPeople;i++){
+      if(c.checkins[i])  p.set(`${pfx}ci${i}`,c.checkins[i]);
+      if(c.checkouts[i]) p.set(`${pfx}co${i}`,c.checkouts[i]);
+    }
+  });
+  return location.href.split('?')[0]+'?'+p.toString();
+}
+
+function saveUrl(){
+  history.replaceState(null,'',buildUrl());
+  try{localStorage.setItem('airbnb_split_url',buildUrl());}catch(e){}
+}
+
+async function copyUrl(){
+  saveCurrentState();
+  const url=buildUrl();
+  try{await navigator.clipboard.writeText(url);}
+  catch(e){prompt('このURLをコピーしてください:',url);return;}
+  const btn=document.getElementById('share-btn');
+  btn.textContent='✓ コピーしました！';btn.classList.add('copied');
+  setTimeout(()=>{btn.innerHTML='🔗 このページのURLをコピーして友達に共有';btn.classList.remove('copied');},2500);
+}
+
+function loadFromUrl(){
+  let search=location.search;
+  if(!search||!new URLSearchParams(search).has('b_n')){
+    try{const saved=localStorage.getItem('airbnb_split_url');if(saved){const q=saved.split('?')[1];if(q)search='?'+q;}}catch(e){}
+  }
+  // デフォルト値（URLパラメータもlocalStorageもない場合）
+  if(!search||!new URLSearchParams(search).has('b_n')){
+    search='?ct=0&b_n=1&b_nm0=%E3%81%8A%E3%81%BF&b_em0=%F0%9F%8C%BB&nc=4&c0_name=%E3%83%96%E3%83%AB%E3%83%83%E3%82%AF%E3%83%AA%E3%83%B3%EF%BC%88%E3%82%A8%E3%82%A2%E3%83%93%E3%83%BC%EF%BC%89&c0_cur=JPY&c0_t=489433&c0_r=155&c0_ci0=2026-06-17&c0_co0=2026-08-18&c1_name=%E3%82%AF%E3%82%A4%E3%83%BC%E3%83%B3%E3%82%BA&c1_cur=USD&c1_t=2100&c1_r=159.25&c1_ci0=2026-06-17&c1_co0=2026-08-18&c2_name=%E3%82%AF%E3%82%A4%E3%83%BC%E3%83%B3%E3%82%BA%EF%BC%88%E3%82%A8%E3%82%A2%E3%83%93%E3%83%BC%EF%BC%89&c2_cur=JPY&c2_t=583843&c2_r=155&c2_ci0=2026-06-17&c2_co0=2026-08-18&c3_name=%E3%83%AA%E3%83%88%E3%83%AB%E3%83%BB%E3%83%9E%E3%83%AB%E3%82%BB%E3%83%A9%EF%BC%88%E3%82%A8%E3%82%A2%E3%83%93%E3%83%BC%EF%BC%89&c3_cur=JPY&c3_t=550357&c3_r=155&c3_ci0=2026-06-17&c3_co0=2026-08-18';
+  }
+  const p=new URLSearchParams(search);
+  if(!p.has('b_n')&&!p.has('nc')) return;
+  base=makeBase();
+  base.numPeople=parseInt(p.get('b_n'))||2;
+  for(let i=0;i<base.numPeople;i++){
+    if(p.get(`b_nm${i}`)) base.names[i]=p.get(`b_nm${i}`);
+    if(p.get(`b_em${i}`)) base.emojis[i]=p.get(`b_em${i}`);
+  }
+  const nc=parseInt(p.get('nc'))||1;
+  candidates=[];
+  for(let idx=0;idx<nc;idx++){
+    const c=makeCand(); const pfx=`c${idx}_`;
+    c.name    =p.get(pfx+'name')||'';
+    c.currency=p.get(pfx+'cur')||'USD';
+    c.total   =p.get(pfx+'t')||'';
+    c.jpyRate =parseFloat(p.get(pfx+'r'))||155;
+    c.stayUrl =p.get(pfx+'su')||'';
+    c.stayAddr=p.get(pfx+'sa')||'';
+    c.memo    =p.get(pfx+'m')||'';
+    for(let i=0;i<base.numPeople;i++){
+      if(p.get(`${pfx}ci${i}`)) c.checkins[i]=p.get(`${pfx}ci${i}`);
+      if(p.get(`${pfx}co${i}`)) c.checkouts[i]=p.get(`${pfx}co${i}`);
+    }
+    candidates.push(c);
+  }
+  const ct=p.get('ct');
+  curTab=ct==='base'||ct==='summary'?ct:(parseInt(ct)||0);
+  if(typeof curTab==='number'&&curTab>=candidates.length) curTab=0;
+  _currency=candidates[typeof curTab==='number'?curTab:0]?.currency||'USD';
+}
+
+loadFromUrl();
+renderTabs();
+renderContent();
 </script>
 </body>
 </html>
